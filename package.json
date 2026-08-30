@@ -36,7 +36,6 @@
     "dev:api": "tsx watch backend/src/main.ts",
     "build:api": "tsc -p backend/tsconfig.json",
     "start:api": "node backend/dist/main.js",
-    "build:custom": "uni build -p",
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union"
   },
