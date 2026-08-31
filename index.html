@@ -10,10 +10,76 @@
         (coverSupport ? ', viewport-fit=cover' : '') + '" />')
     </script>
     <title></title>
+    <style>
+      #startup-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        overflow: hidden;
+        background: #56657e;
+        transition: opacity 280ms ease;
+      }
+      #startup-splash img {
+        position: absolute;
+        display: block;
+      }
+      #startup-splash .startup-circle {
+        width: 211px;
+        height: 211px;
+        animation: startup-float 2.4s ease-in-out infinite alternate;
+      }
+      #startup-splash .startup-left { left: -76px; top: 255px; }
+      #startup-splash .startup-right { right: -67px; top: 466px; }
+      #startup-splash .startup-wave {
+        left: 50%;
+        bottom: 0;
+        width: 430px;
+        height: 204px;
+        transform: translateX(-50%);
+        animation: startup-wave 2.8s ease-in-out infinite alternate;
+      }
+      #startup-splash .startup-wave-bottom {
+        left: 50%;
+        bottom: 0;
+        width: 430px;
+        height: 74px;
+        transform: translateX(-50%);
+        animation: startup-wave-bottom 2.2s ease-in-out infinite alternate;
+      }
+      #startup-splash .startup-logo {
+        left: 50%;
+        top: 50%;
+        width: 250px;
+        transform: translate(-50%, -50%);
+        animation: startup-logo 900ms ease-out both;
+      }
+      @keyframes startup-float { to { transform: translateY(-8px); } }
+      @keyframes startup-wave { to { transform: translateX(-50%) translateY(-10px); } }
+      @keyframes startup-wave-bottom { to { transform: translateX(-50%) translateY(-5px); } }
+      @keyframes startup-logo {
+        from { opacity: 0; transform: translate(-50%, -46%) scale(.92); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+    </style>
+    <script>
+      window.setTimeout(function () {
+        var splash = document.getElementById('startup-splash')
+        if (!splash) return
+        splash.style.opacity = '0'
+        window.setTimeout(function () { splash.remove() }, 300)
+      }, 2400)
+    </script>
     <!--preload-links-->
     <!--app-context-->
   </head>
   <body>
+    <div id="startup-splash" aria-label="Taxi Cross Border 啟動畫面">
+      <img class="startup-circle startup-left" src="/static/splash/ellipse-left.svg" alt="" />
+      <img class="startup-circle startup-right" src="/static/splash/ellipse-right.svg" alt="" />
+      <img class="startup-wave" src="/static/splash/wave.svg" alt="" />
+      <img class="startup-wave-bottom" src="/static/splash/wave-bottom.svg" alt="" />
+      <img class="startup-logo" src="/static/splash/launch.png" alt="Taxi Cross Border" />
+    </div>
     <div id="app"><!--app-html--></div>
     <script type="module" src="/src/main.js"></script>
   </body>
