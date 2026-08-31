@@ -12,9 +12,13 @@
         "compilerVersion" : 3,
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
-            "waiting" : true,
+            "waiting" : false,
             "autoclose" : true,
-            "delay" : 0
+            "delay" : 0,
+            "iosStyle" : "storyboard",
+            "ios" : {
+                "storyboard" : "static/splash/LaunchScreen.zip"
+            }
         },
         /* 模块配置 */
         "modules" : {},

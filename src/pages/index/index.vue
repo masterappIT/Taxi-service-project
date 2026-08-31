@@ -16,7 +16,8 @@
     <view class="hit hit-swap" @click="swapRoute" />
     <view class="hit hit-date" @click="chooseDate" />
     <view class="hit hit-submit" @click="searchTrips" />
-    <view class="hit hit-services" @click="showComingSoon('快捷服務')" />
+    <view class="hit hit-services" @tap="showComingSoon('快捷服務')" />
+    <view class="hit hit-trips" @tap="openTrips" />
     <view class="accessible-values">{{ origin }} · {{ destination }}</view>
   </view>
 </template>
@@ -59,6 +60,13 @@ const openMap = () => {
 }
 const locateMe = () => useCurrentLocation()
 const zoomIn = () => uni.showToast({ title: '地圖功能開發中', icon: 'none' })
+const openTrips = () => {
+  tripStore.setRoute(origin.value, destination.value)
+  uni.navigateTo({
+    url: '/pages/trips/trips',
+    fail: () => uni.reLaunch({ url: '/pages/trips/trips' })
+  })
+}
 const showComingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 
 function swapRoute() {
@@ -74,12 +82,12 @@ function searchTrips() {
 </script>
 
 <style scoped>
-.page { position: relative; width: 100%; min-height: 100vh; overflow: hidden; background: #fff; }
-.design-art { position: relative; z-index: 0; display: block; width: 100%; height: auto; }
-.google-map { position: absolute; z-index: 1; top: 11.37%; left: 0; width: 100%; height: 55.69%; border: 0; opacity: .98; }
-.map-fallback { position: absolute; z-index: 1; top: 11.37%; left: 0; width: 100%; height: 55.69%; pointer-events: none; }
-.topbar-art { position: absolute; z-index: 3; top: 0; left: 0; display: block; width: 100%; height: auto; pointer-events: none; }
-.hit { position: absolute; z-index: 2; }
+.page { position: relative; width: 430px; height: 932px; margin: 0 auto; overflow: hidden; background: #fff; border-radius: 35px; box-sizing: border-box; zoom: min(1, calc(100vw / 430px), calc(100vh / 932px)); }
+.design-art { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+.google-map { position: absolute; z-index: 0; top: 11.37%; left: 0; width: 100%; height: 55.69%; border: 0; opacity: .98; }
+.map-fallback { position: absolute; z-index: 0; top: 11.37%; left: 0; width: 100%; height: 55.69%; pointer-events: none; }
+.topbar-art { position: absolute; z-index: 3; display: block; top: 0; left: 0; width: 100%; height: auto; pointer-events: none; }
+.hit { position: absolute; z-index: 4; }
 .hit-location { top: 0; right: 0; width: 32%; height: 13%; }
 .hit-map { top: 11.3%; left: 0; width: 100%; height: 55%; }
 .hit-current-location { top: 13%; right: 4%; width: 13%; height: 6%; }
@@ -88,6 +96,7 @@ function searchTrips() {
 .hit-swap { top: 64%; right: 3%; width: 18%; height: 16%; }
 .hit-date { top: 78%; left: 3%; width: 94%; height: 10%; }
 .hit-submit { top: 87%; left: 3%; width: 94%; height: 9%; }
-.hit-services { top: 93%; left: 0; width: 100%; height: 7%; }
+.hit-services { top: 93%; left: 0; width: 48%; height: 7%; }
+.hit-trips { top: 93%; right: 0; width: 48%; height: 7%; }
 .accessible-values { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
 </style>
