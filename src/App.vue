@@ -18,9 +18,11 @@ export default {
   },
   onLaunch() {
     console.log('App Launch')
+  },
+  mounted() {
     setTimeout(() => {
       this.showSplash = false
-    }, 1600)
+    }, 2200)
   },
   onShow() {
     console.log('App Show')
@@ -43,6 +45,51 @@ export default {
   z-index: 9999;
   overflow: hidden;
   background: #56657e;
+  animation: splash-enter 300ms ease-out both;
+}
+.splash-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.04);
+  animation: splash-shimmer 1.8s ease-in-out infinite alternate;
+}
+.splash-circle {
+  animation: splash-float 2.4s ease-in-out infinite alternate;
+}
+.splash-wave {
+  animation: splash-wave 2.8s ease-in-out infinite alternate;
+}
+.splash-wave-bottom {
+  animation: splash-wave-bottom 2.2s ease-in-out infinite alternate;
+}
+.splash-logo {
+  animation: splash-logo 900ms ease-out both;
+}
+@keyframes splash-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes splash-shimmer {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+@keyframes splash-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+@keyframes splash-wave {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(-10px); }
+}
+@keyframes splash-wave-bottom {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(-5px); }
+}
+@keyframes splash-logo {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 .splash-circle,
 .splash-wave,
