@@ -1,13 +1,11 @@
 <template>
   <view class="map-actions" aria-label="地圖操作">
-    <view class="hit hit-location" @tap="$emit('location')" />
-    <view class="hit hit-map" @tap="$emit('map')" />
-    <view class="hit hit-current-location" @tap="$emit('location')" />
+    <view class="map-tool locate" @tap="$emit('location')"><view class="locate-ring" /></view>
   </view>
 </template>
 <script setup lang="ts">
 defineEmits<{ location: []; map: [] }>()
 </script>
 <style scoped>
-.map-actions{position:absolute;inset:0;z-index:4}.hit{position:absolute}.hit-location{top:0;right:0;width:32%;height:13%}.hit-map{top:11.3%;left:0;width:100%;height:55%}.hit-current-location{top:13%;right:4%;width:13%;height:6%}
+.map-actions{position:absolute;inset:0;z-index:4;pointer-events:none}.map-tool{position:absolute;top:543px;width:42px;height:42px;border-radius:10px;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,.18);pointer-events:auto;display:flex;align-items:center;justify-content:center}.locate{right:12px}.locate-ring{width:17px;height:17px;border:3px solid #38434a;border-radius:50%;box-shadow:inset 0 0 0 4px #fff;background:#38434a}
 </style>

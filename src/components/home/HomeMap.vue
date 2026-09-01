@@ -9,22 +9,11 @@
     />
     <!-- #endif -->
     <!-- #ifdef APP-PLUS -->
-    <view class="map-fallback" aria-label="地圖預覽" />
+    <map class="native-map" :latitude="22.3048" :longitude="114.1615" :scale="12" />
     <!-- #endif -->
-    <image class="design-art" src="/static/figma-home.svg" mode="widthFix" />
   </view>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const mapVisible = ref(true)
-const handleMapError = () => {
-  mapVisible.value = false
-  uni.showToast({ title: 'Google Maps 暫時無法載入', icon: 'none' })
-}
-</script>
-
 <style scoped>
-.map-layer{position:absolute;inset:0;z-index:0;pointer-events:none}.design-art{position:absolute;inset:0;z-index:1;display:block;width:100%;height:100%;pointer-events:none}.google-map,.map-fallback{position:absolute;z-index:0;top:11.37%;left:0;width:100%;height:55.69%;border:0;opacity:.98}.map-fallback{pointer-events:none}
+.map-layer{position:absolute;left:0;top:106px;width:430px;height:519px;z-index:0;overflow:hidden;background:#edf0f2;pointer-events:none}.google-map,.native-map{position:absolute;inset:0;width:100%;height:100%;border:0}
 </style>

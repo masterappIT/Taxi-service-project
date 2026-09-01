@@ -1,8 +1,11 @@
 <template>
   <view class="bottom-nav" aria-label="首頁導覽">
-    <image class="bottom-art" src="/static/figma-home.svg" mode="widthFix" />
-    <view class="nav-hit nav-services" @tap="$emit('services')" />
-    <view class="nav-hit nav-trips" @tap="$emit('trips')" />
+    <view class="nav-link" @tap="$emit('services')">
+      <image src="/static/home/nav/services.svg" mode="aspectFit" />
+    </view>
+    <view class="nav-link" @tap="$emit('trips')">
+      <image src="/static/home/nav/trips.svg" mode="aspectFit" />
+    </view>
   </view>
 </template>
 
@@ -11,5 +14,5 @@ defineEmits<{ services: []; trips: [] }>()
 </script>
 
 <style scoped>
-.bottom-nav{position:absolute;left:0;right:0;bottom:0;height:102px;z-index:4;overflow:hidden}.bottom-art{position:absolute;left:0;bottom:0;width:100%;height:auto;display:block;pointer-events:none}.nav-hit{position:absolute;top:0;height:100%;pointer-events:auto}.nav-services{left:0;width:48%}.nav-trips{right:0;width:48%}
+.bottom-nav{position:absolute;left:0;bottom:0;width:430px;height:102px;z-index:4;padding:10px;box-sizing:border-box;background:#fff;border-radius:0 0 22px 22px;display:flex;align-items:center;justify-content:center;gap:60px}.nav-link{width:28px;height:28px}.nav-link image{display:block;width:28px;height:28px}
 </style>

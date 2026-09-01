@@ -22,7 +22,7 @@ import OrdersCard from '../../components/profile/OrdersCard.vue'
 import CommonActions from '../../components/profile/CommonActions.vue'
 import ProfileBottomNav from '../../components/profile/ProfileBottomNav.vue'
 
-const goHome = () => uni.reLaunch({ url: '/pages/index/index' })
+const goHome = () => uni.navigateBack({ delta: 1, fail: () => uni.reLaunch({ url: '/pages/index/index' }) })
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>
 
