@@ -1,15 +1,26 @@
 <template>
   <view class="page">
-    <HomeMap />
-    <HomeHeader />
-    <HomeTravelModeSwitch v-model:mode="rideMode" />
-    <HomeMapActions @location="useCurrentLocation" @map="openMap" />
-    <HomeRoutePanel
-      v-model:mode="travelMode"
+    <HomeMap v-if="rideMode === 'cross-border'" />
+    <HomeHeader v-if="rideMode === 'cross-border'" />
+    <HomeTravelModeSwitch v-model:mode="rideMode" :class="{ 'business-layout': rideMode === 'business' }" />
+    <template v-if="rideMode === 'cross-border'">
+      <HomeMapActions @location="useCurrentLocation" @map="openMap" />
+      <HomeRoutePanel
+        v-model:mode="travelMode"
+        @origin="chooseOrigin"
+        @destination="chooseDestination"
+        @departure-time="chooseDepartureTime"
+        @flight="chooseFlight"
+      />
+    </template>
+    <BusinessCharterPanel
+      v-else
       @origin="chooseOrigin"
       @destination="chooseDestination"
-      @departure-time="chooseDepartureTime"
-      @flight="chooseFlight"
+      @date-time="chooseDepartureTime"
+      @duration="showComingSoon('用車時間選擇')"
+      @book="showComingSoon('商務包車預約')"
+      @promo="showComingSoon('優惠預約')"
     />
     <HomeBottomNav @services="showComingSoon('快捷服務')" @trips="openTrips" />
     <view class="accessible-values">{{ origin }} · {{ destination }}</view>
@@ -18,12 +29,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { useTripStore } from '../../stores/trip'
 import HomeMap from '../../components/home/HomeMap.vue'
 import HomeHeader from '../../components/home/HomeHeader.vue'
 import HomeTravelModeSwitch from '../../components/home/HomeTravelModeSwitch.vue'
 import HomeMapActions from '../../components/home/HomeMapActions.vue'
 import HomeRoutePanel from '../../components/home/HomeRoutePanel.vue'
+import BusinessCharterPanel from '../../components/home/BusinessCharterPanel.vue'
 import HomeBottomNav from '../../components/home/HomeBottomNav.vue'
 
 type RideMode = 'cross-border' | 'business'
@@ -34,6 +47,12 @@ const rideMode = ref<RideMode>('cross-border')
 const travelMode = ref<TravelMode>('cross-border')
 const origin = ref('香港 · 九龍站')
 const destination = ref('廣東 · 深圳灣口岸')
+let hasShown = false
+
+onShow(() => {
+  if (hasShown) rideMode.value = 'cross-border'
+  hasShown = true
+})
 
 const chooseOrigin = () => uni.showToast({ title: '地點選擇功能開發中', icon: 'none' })
 const chooseDestination = () => uni.showToast({ title: '地點選擇功能開發中', icon: 'none' })
