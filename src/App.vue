@@ -34,7 +34,18 @@ export default {
 </script>
 
 <style>
-.app-shell,
+.app-shell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  background: #56657e;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
 .splash-screen {
   width: 100%;
   min-height: 100vh;

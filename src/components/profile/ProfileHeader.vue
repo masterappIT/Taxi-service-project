@@ -1,0 +1,21 @@
+<template>
+  <view class="profile-header">
+    <image class="avatar" :src="avatarUrl || '/static/profile/avatar-empty.svg'" mode="aspectFit" @tap="$emit('avatar')" />
+    <text class="profile-title">Profile</text>
+    <image class="notification" src="/static/profile/notification.svg" mode="aspectFit" @tap="$emit('settings')" />
+    <text class="greeting">Hi, Jonhn</text>
+    <view v-if="unreadCount > 0" class="bell" aria-label="未讀消息" @tap="$emit('notifications')">
+      <image class="bell-icon" src="/static/profile/notification-bell.svg" mode="aspectFit" />
+      <image class="bell-tail" src="/static/profile/notification-bell-tail.svg" mode="aspectFit" />
+      <image class="badge" src="/static/profile/notification-badge.svg" mode="aspectFit" />
+      <text class="badge-count">{{ unreadCount > 99 ? '99+' : unreadCount }}</text>
+    </view>
+  </view>
+</template>
+<script setup lang="ts">
+const { avatarUrl } = withDefaults(defineProps<{ avatarUrl?: string; unreadCount?: number }>(), { avatarUrl: '', unreadCount: 2 })
+defineEmits<{ notifications: []; avatar: []; settings: [] }>()
+</script>
+<style scoped>
+.profile-header{position:absolute;top:0;left:0;width:430px;height:260px;background:#56657E;border-radius:35px;overflow:hidden;color:#fff}.avatar{position:absolute;top:92px;left:calc(50% - 40px);width:80px;height:80px;border-radius:50%}.profile-title{position:absolute;top:60px;left:calc(50% - 33px);font-size:20px;font-weight:700}.greeting{position:absolute;top:168px;left:calc(50% - 43px);font-size:18px;font-weight:700}.notification{position:absolute;top:168px;left:376px;width:25px;height:26px}.bell{position:absolute;top:168px;left:30px;width:25px;height:25px}.bell-icon{position:absolute;top:0;left:0;width:20.7749px;height:19.7343px}.bell-tail{position:absolute;top:19.7343px;left:6.23px;width:8.31101px;height:5.26634px}.badge{position:absolute;top:-2px;right:-1px;width:12px;height:12px}.badge-count{position:absolute;top:-2px;right:2px;width:10px;color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:8px;font-weight:900;line-height:12px;text-align:center}
+</style>
