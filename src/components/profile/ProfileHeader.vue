@@ -3,17 +3,17 @@
     <image class="avatar" :src="avatarUrl || '/static/profile/avatar-empty.svg'" mode="aspectFit" @tap="$emit('avatar')" />
     <text class="profile-title">Profile</text>
     <image class="notification" src="/static/profile/notification.svg" mode="aspectFit" @tap="$emit('settings')" />
-    <text class="greeting">Hi, Jonhn</text>
-    <view v-if="unreadCount > 0" class="bell" aria-label="未讀消息" @tap="$emit('notifications')">
+    <text class="greeting">Hi, {{ displayName }}</text>
+    <view class="bell" aria-label="我的消息" @tap="$emit('notifications')">
       <image class="bell-icon" src="/static/profile/notification-bell.svg" mode="aspectFit" />
       <image class="bell-tail" src="/static/profile/notification-bell-tail.svg" mode="aspectFit" />
-      <image class="badge" src="/static/profile/notification-badge.svg" mode="aspectFit" />
-      <text class="badge-count">{{ unreadCount > 99 ? '99+' : unreadCount }}</text>
+      <image v-if="unreadCount > 0" class="badge" src="/static/profile/notification-badge.svg" mode="aspectFit" />
+      <text v-if="unreadCount > 0" class="badge-count">{{ unreadCount > 99 ? '99+' : unreadCount }}</text>
     </view>
   </view>
 </template>
 <script setup lang="ts">
-const { avatarUrl } = withDefaults(defineProps<{ avatarUrl?: string; unreadCount?: number }>(), { avatarUrl: '', unreadCount: 2 })
+const { avatarUrl, displayName } = withDefaults(defineProps<{ avatarUrl?: string; displayName?: string; unreadCount?: number }>(), { avatarUrl: '', displayName: 'John', unreadCount: 0 })
 defineEmits<{ notifications: []; avatar: []; settings: [] }>()
 </script>
 <style scoped>

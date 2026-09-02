@@ -1,26 +1,44 @@
 <template>
   <view class="page">
     <ProfileHeader
-      :unread-count="2"
-      @notifications="comingSoon('消息')"
+      :avatar-url="avatarUrl"
+      :display-name="displayName"
+      :unread-count="unreadCount"
+      @notifications="openMessages"
       @settings="comingSoon('設定')"
-      @avatar="comingSoon('頭像')"
+      @avatar="openAccount"
     />
     <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
-    <view class="wallet-position"><WalletCard @tap="handleWalletAction" /></view>
+    <view class="wallet-position"><WalletCard @select="handleWalletAction" /></view>
     <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
-    <view class="common-position" @tap="comingSoon('常用功能')"><CommonActions /></view>
+    <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
     <ProfileBottomNav @home="goHome" />
   </view>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import ProfileHeader from '../../components/profile/ProfileHeader.vue'
 import UpgradeCard from '../../components/profile/UpgradeCard.vue'
 import WalletCard from '../../components/profile/WalletCard.vue'
 import OrdersCard from '../../components/profile/OrdersCard.vue'
 import CommonActions from '../../components/profile/CommonActions.vue'
 import ProfileBottomNav from '../../components/profile/ProfileBottomNav.vue'
+
+const totalMessages = 4
+const unreadCount = ref(totalMessages)
+const avatarUrl = ref('')
+const displayName = ref('John')
+
+onShow(() => {
+  const profile = uni.getStorageSync('account-profile')
+  avatarUrl.value = profile?.avatarUrl || ''
+  displayName.value = profile?.displayName || 'John'
+  const saved = uni.getStorageSync('read-message-types')
+  const readCount = Array.isArray(saved) ? new Set(saved).size : 0
+  unreadCount.value = Math.max(0, totalMessages - readCount)
+})
 
 const goHome = () => {
   if (getCurrentPages().length > 1) {
@@ -29,8 +47,11 @@ const goHome = () => {
   }
   uni.reLaunch({ url: '/pages/index/index' })
 }
+const openMessages = () => uni.navigateTo({ url: '/pages/messages/messages' })
+const openAccount = () => uni.navigateTo({ url: '/pages/account/account' })
 const openMembership = () => uni.navigateTo({ url: '/pages/membership/membership' })
 const handleWalletAction = (name: string) => name === '里程' ? uni.navigateTo({ url: '/pages/mileage/mileage' }) : comingSoon(name)
+const handleCommonAction = (name: string) => name === '邀請好友' ? uni.navigateTo({ url: '/pages/invite/invite' }) : comingSoon(name)
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>
 

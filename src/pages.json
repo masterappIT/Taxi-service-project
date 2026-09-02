@@ -3,7 +3,11 @@
     { "path": "pages/index/index", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/trips/trips", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/membership/membership", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
-    { "path": "pages/mileage/mileage", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } }
+    { "path": "pages/mileage/mileage", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/invite/invite", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/messages/messages", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/messages/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/account/account", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
