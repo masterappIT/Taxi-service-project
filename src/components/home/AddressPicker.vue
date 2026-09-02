@@ -3,17 +3,19 @@
     <view class="address-header">
       <image class="back" src="/static/messages/back.svg" mode="aspectFit" @tap="$emit('close')" />
       <text class="title">地址選擇</text>
-      <view class="city-search"><text class="city">香港</text><image class="city-location" src="/static/home/address/city-location.svg" mode="aspectFit" /><view class="search-box"><image class="search-icon" src="/static/home/address/search.svg" mode="aspectFit" /><input v-model="keyword" class="search-input" placeholder="" confirm-type="search" /></view><text class="search-action">搜索</text></view>
+      <view class="city-search"><text class="city">{{ currentCity }}</text><image class="city-location" src="/static/home/address/city-location.svg" mode="aspectFit" @tap="$emit('locate')" /><view class="search-box"><image class="search-icon" src="/static/home/address/search.svg" mode="aspectFit" /><input v-model="keyword" class="search-input" placeholder="" confirm-type="search" /></view><text class="search-action">搜索</text></view>
     </view>
-    <view class="current-card"><text class="current-title">當前定位城市：香港</text><view class="current-place"><image src="/static/home/route/origin.svg" mode="aspectFit" /><view><text class="place-name">香港機場</text><text class="place-address">香港特別行政區-離島區-香港赤臘角天路1號</text></view></view></view>
+    <view class="current-card"><text class="current-title">當前定位城市：{{ currentCity }}</text><view class="current-place" @tap="$emit('use-current')"><image src="/static/home/route/origin.svg" mode="aspectFit" /><view><text class="place-name">{{ currentLocationLabel }}</text><text class="place-address">{{ detailedAddress }}</text></view></view></view>
     <view class="recommend-list"><view class="recommend-title"><image src="/static/home/route/destination.svg" mode="aspectFit" /><text>推薦地點</text></view><view v-for="place in filteredPlaces" :key="place.name" class="place-row" @tap="$emit('select', place.name)"><image src="/static/home/route/destination.svg" mode="aspectFit" /><view><text class="place-name">{{ place.name }}</text><text class="place-address">{{ place.address }}</text></view></view></view>
   </view>
 </template>
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-const props = defineProps<{ selecting: 'origin' | 'destination' }>()
-defineEmits<{ close: []; select: [value: string] }>()
+const props = defineProps<{ selecting: 'origin' | 'destination'; locationLabel: string; detailedAddress: string }>()
+defineEmits<{ close: []; select: [value: string]; locate: []; 'use-current': [] }>()
 const keyword = ref('')
+const currentLocationLabel = computed(() => props.locationLabel || '目前位置')
+const currentCity = computed(() => currentLocationLabel.value.split(' · ')[0] || '目前城市')
 const places = computed(() => props.selecting === 'origin' ? [{ name: '香港國際機場', address: '香港特別行政區-離島區-香港赤臘角天路1號' }, { name: '香港海洋公園', address: '香港特別行政區-南區-香港香港仔黃竹坑180號' }, { name: '香港迪士尼樂園', address: '香港特別行政區-荃灣區-大嶼山竹篙灣' }, { name: '香港銅鑼灣時代廣場', address: '香港特別行政區-灣仔區-香港銅鑼灣勿地臣街1號' }, { name: '尖沙咀海港城', address: '香港特別行政區-九龍-尖沙咀廣東道' }, { name: '香港會展中心', address: '香港特別行政區-灣仔區-博覽道1號' }, { name: '亞洲國際博覽館', address: '香港特別行政區-離島區-航展道1號' }, { name: '蘭桂坊', address: '香港特別行政區-中西區-德己立街' }] : [{ name: '深圳灣口岸', address: '廣東省深圳市南山區東濱路1號' }, { name: '深圳寶安國際機場', address: '廣東省深圳市寶安區航城街道' }, { name: '廣州南站', address: '廣東省廣州市番禺區石壁街道' }, { name: '珠海拱北口岸', address: '廣東省珠海市香洲區昌盛路' }])
 const filteredPlaces = computed(() => places.value.filter(place => !keyword.value || `${place.name}${place.address}`.includes(keyword.value)))
 </script>

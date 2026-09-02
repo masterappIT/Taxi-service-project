@@ -19,4 +19,11 @@ export async function updateSettings(settings: AppSettings): Promise<AppSettings
   return response.data as AppSettings
 }
 
+export type LocationDetails = { city: string; address: string; district?: string }
+
+export async function reverseGeocode(latitude: number, longitude: number): Promise<LocationDetails> {
+  const response = await uni.request({ url: `${API_BASE_URL}/location/reverse-geocode`, data: { latitude, longitude } })
+  return response.data as LocationDetails
+}
+
 export type { CrossBorderTrip }

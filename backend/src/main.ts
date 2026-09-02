@@ -41,7 +41,33 @@ class SettingsController {
     return this.settings
   }
 }
+@Controller('location')
+class LocationController {
+  @Get('reverse-geocode')
+  async reverseGeocode(@Req() req: RequestLike & { query?: { latitude?: string; longitude?: string } }) {
+    const latitude = Number(req.query?.latitude)
+    const longitude = Number(req.query?.longitude)
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
+      throw new HttpException('Valid latitude and longitude are required', HttpStatus.BAD_REQUEST)
+    }
+    const key = process.env.TENCENT_MAP_KEY
+    if (!key) throw new HttpException('Tencent Location Service is not configured', HttpStatus.SERVICE_UNAVAILABLE)
+    const params = new URLSearchParams({ location: `${latitude},${longitude}`, key, get_poi: '0' })
+    const response = await fetch(`https://apis.map.qq.com/ws/geocoder/v1/?${params}`)
+    const data = await response.json() as { status: number; message?: string; result?: { address?: string; formatted_addresses?: { recommend?: string }; address_component?: { city?: string; district?: string } } }
+    if (!response.ok || data.status !== 0 || !data.result) {
+      throw new HttpException(data.message || 'Unable to resolve location', HttpStatus.BAD_GATEWAY)
+    }
+    const component = data.result.address_component
+    return {
+      city: component?.city || component?.district || '',
+      district: component?.district || '',
+      address: data.result.formatted_addresses?.recommend || data.result.address || ''
+    }
+  }
+}
+
 @Controller('health') class HealthController { @Get() check() { return { status: 'ok', service: 'taxi-cross-border-api' } } }
-@Module({ controllers: [HealthController, SettingsController, AdminAuthController, AdminController] }) class AppModule {}
+@Module({ controllers: [HealthController, LocationController, SettingsController, AdminAuthController, AdminController] }) class AppModule {}
 async function bootstrap() { const app = await NestFactory.create(AppModule); app.enableCors({ origin: [process.env.ADMIN_CORS_ORIGIN || 'http://localhost:5174', 'http://localhost:5177', 'http://127.0.0.1:5177'], methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization'] }); await app.listen(Number(process.env.PORT) || 3000) }
 bootstrap()

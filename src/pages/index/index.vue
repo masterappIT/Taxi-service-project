@@ -18,7 +18,16 @@
           @update:flight-number="flightNumber = $event"
         />
         <view class="accessible-values">{{ origin }} · {{ destination }}</view>
-        <AddressPicker v-if="addressPicker" :selecting="addressPicker" @close="addressPicker = null" @select="selectAddress" />
+        <AddressPicker
+          v-if="addressPicker"
+          :selecting="addressPicker"
+          :location-label="locationLabel"
+          :detailed-address="detailedAddress"
+          @close="addressPicker = null"
+          @select="selectAddress"
+          @locate="locateCurrentAddress"
+          @use-current="useCurrentLocation(true)"
+        />
         <BookingTimePicker v-if="bookingTimePicker" @close="bookingTimePicker = false" @confirm="confirmDepartureTime" />
       </view>
     </view>
@@ -67,6 +76,7 @@ import AddressPicker from '../../components/home/AddressPicker.vue'
 import BookingTimePicker from '../../components/home/BookingTimePicker.vue'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { activateEmbeddedPageHost, cachedPagePath, visitedPages, openCachedPage } from '../../utils/navigation'
+import { reverseGeocode } from '../../services/api'
 import { findLocalRegion } from '../../utils/localRegions'
 // #ifdef MP-WEIXIN
 import TripsPage from '../trips/trips.vue'
@@ -99,6 +109,7 @@ const flightNumber = ref('')
 const mapLatitude = ref(22.3046)
 const mapLongitude = ref(114.1619)
 const locationLabel = ref('香港 · 油尖旺區')
+const detailedAddress = ref('香港九龍站附近')
 const bookingTimePicker = ref(false)
 let hasShown = false
 const { responsiveStyle } = useResponsiveCanvas()
@@ -112,10 +123,16 @@ const addressPicker = ref<'origin' | 'destination' | null>(null)
 const chooseOrigin = () => { addressPicker.value = 'origin' }
 const chooseDestination = () => { addressPicker.value = 'destination' }
 const selectAddress = (value: string) => { if (addressPicker.value === 'origin') origin.value = value; if (addressPicker.value === 'destination') destination.value = value; addressPicker.value = null }
+const locateCurrentAddress = () => useCurrentLocation(false)
+const selectCurrentLocation = () => {
+  if (addressPicker.value === 'origin') origin.value = detailedAddress.value
+  if (addressPicker.value === 'destination') destination.value = detailedAddress.value
+  addressPicker.value = null
+}
 const chooseDepartureTime = () => { bookingTimePicker.value = true }
 const confirmDepartureTime = (value: string) => { departureTime.value = value; bookingTimePicker.value = false }
 
-const useCurrentLocation = () => {
+const useCurrentLocation = (closePicker = false) => {
   uni.getLocation({
     type: 'gcj02',
     success: ({ latitude, longitude }) => {
@@ -123,6 +140,16 @@ const useCurrentLocation = () => {
       mapLongitude.value = longitude
       const localRegion = findLocalRegion(latitude, longitude)
       locationLabel.value = localRegion ? `${localRegion.region} · ${localRegion.district}` : '目前位置'
+      detailedAddress.value = localRegion ? `${locationLabel.value}附近` : `目前位置（${latitude.toFixed(5)}, ${longitude.toFixed(5)}）`
+      reverseGeocode(latitude, longitude)
+        .then((location) => {
+          if (location.address) detailedAddress.value = location.address
+          if (location.city) locationLabel.value = location.district ? `${location.city} · ${location.district}` : location.city
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          if (closePicker) selectCurrentLocation()
+        })
       uni.showToast({ title: '已定位到目前位置', icon: 'none' })
     },
     fail: () => uni.showToast({ title: '無法取得位置，請允許定位權限', icon: 'none' })
