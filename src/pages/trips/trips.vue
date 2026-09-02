@@ -16,7 +16,7 @@
         <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
       </view>
     </scroll-view>
-    <ProfileBottomNav @home="goHome" />
+    <ProfileBottomNav @home="goHome" @service="openCustomerService" />
   </view>
 </template>
 
@@ -52,18 +52,21 @@ onShow(() => {
 })
 
 const goHome = () => openCachedPage('/pages/index/index')
+const openCustomerService = () => uni.showToast({ title: '客服功能開發中', icon: 'none' })
 const openMessages = () => openCachedPage('/pages/messages/messages')
 const openSettings = () => openCachedPage('/pages/settings/settings')
 const openAccount = () => openCachedPage('/pages/account/account')
 const openMembership = () => openCachedPage('/pages/membership/membership')
 const handleWalletAction = (name: string) => {
   if (name === '里程') return openCachedPage('/pages/mileage/mileage')
+   if (name === '優惠券') return openCachedPage('/pages/coupons/coupons')
   if (name === '錢包' || name === '錢包詳細' || name === '餘額') return openCachedPage('/pages/wallet/wallet')
   comingSoon(name)
 }
 const handleCommonAction = (name: string) => {
   if (name === '常用資料') return openCachedPage('/pages/common-data/common-data')
   if (name === '邀請好友') return openCachedPage('/pages/invite/invite')
+  if (name === '我的投訴') return openCachedPage('/pages/complaints/complaints')
   comingSoon(name)
 }
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })

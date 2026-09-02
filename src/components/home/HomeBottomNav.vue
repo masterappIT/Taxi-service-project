@@ -1,10 +1,13 @@
 <template>
   <view class="bottom-nav" aria-label="首頁導覽">
-    <view class="nav-link" @tap="$emit('services')">
+    <view class="nav-link active">
       <image src="/static/home/nav/services.svg" mode="aspectFit" />
     </view>
     <view class="nav-link" @tap="$emit('trips')">
       <image src="/static/home/nav/trips.svg" mode="aspectFit" />
+    </view>
+    <view class="nav-link" @tap="$emit('services')">
+      <image src="/static/home/nav/customer-service.svg" mode="aspectFit" />
     </view>
   </view>
 </template>

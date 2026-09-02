@@ -58,6 +58,8 @@
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
   <CommonDataPage v-if="visitedPages.has('/pages/common-data/common-data')" v-show="activePagePath === '/pages/common-data/common-data'" />
+  <CouponsPage v-if="visitedPages.has('/pages/coupons/coupons')" v-show="activePagePath === '/pages/coupons/coupons'" />
+  <ComplaintsPage v-if="visitedPages.has('/pages/complaints/complaints')" v-show="activePagePath === '/pages/complaints/complaints'" />
   <!-- #endif -->
 </template>
 
@@ -89,6 +91,8 @@ import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'
 import CommonDataPage from '../common-data/common-data.vue'
+import CouponsPage from '../coupons/coupons.vue'
+import ComplaintsPage from '../complaints/complaints.vue'
 // #endif
 
 type RideMode = 'cross-border' | 'business'
