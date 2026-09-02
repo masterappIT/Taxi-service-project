@@ -37,13 +37,27 @@ export default {
 </script>
 
 <style>
-.app-shell {
+page,
+body,
+#app {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+ .app-shell {
   position: fixed;
   inset: 0;
-  width: 100%;
+ width: 100%;
+  max-width: none;
   height: 100vh;
   height: 100dvh;
   min-height: 100dvh;
+  box-sizing: border-box;
   background: #56657e;
   overflow: hidden;
   overscroll-behavior: none;

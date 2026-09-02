@@ -7,4 +7,16 @@ export async function getHealth(): Promise<{ status: string }> {
   return response.data as { status: string }
 }
 
+export type AppSettings = { language: string; region: string; currency: string }
+
+export async function getSettings(): Promise<AppSettings> {
+  const response = await uni.request({ url: `${API_BASE_URL}/settings` })
+  return response.data as AppSettings
+}
+
+export async function updateSettings(settings: AppSettings): Promise<AppSettings> {
+  const response = await uni.request({ url: `${API_BASE_URL}/settings`, method: 'POST', data: settings })
+  return response.data as AppSettings
+}
+
 export type { CrossBorderTrip }

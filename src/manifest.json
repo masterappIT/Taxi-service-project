@@ -58,6 +58,14 @@
         "setting" : {
             "urlCheck" : false
         },
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "用於顯示目前位置及提供乘車定位服務"
+            }
+        },
+        "requiredPrivateInfos" : [
+            "getLocation"
+        ],
         "usingComponents" : true
     },
     "mp-alipay" : {

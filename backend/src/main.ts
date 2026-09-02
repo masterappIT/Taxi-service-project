@@ -30,7 +30,18 @@ class AdminController {
   @Get('users') listUsers(@Req() req: RequestLike) { requireAuth(req); return { data: users, total: users.length } }
   @Get('trips') listTrips(@Req() req: RequestLike) { requireAuth(req); return { data: trips.map(t => ({ ...t, user: users.find(u => u.id === t.userId) || null })), total: trips.length } }
 }
+@Controller('settings')
+class SettingsController {
+  private settings = { language: '繁體中文', region: '香港', currency: 'HKD' }
+  @Get() get() { return this.settings }
+  @Post() update(@Body() body: { language?: string; region?: string; currency?: string }) {
+    if (body.language) this.settings.language = body.language
+    if (body.region) this.settings.region = body.region
+    if (body.currency) this.settings.currency = body.currency
+    return this.settings
+  }
+}
 @Controller('health') class HealthController { @Get() check() { return { status: 'ok', service: 'taxi-cross-border-api' } } }
-@Module({ controllers: [HealthController, AdminAuthController, AdminController] }) class AppModule {}
-async function bootstrap() { const app = await NestFactory.create(AppModule); app.enableCors({ origin: process.env.ADMIN_CORS_ORIGIN || 'http://localhost:5174', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization'] }); await app.listen(Number(process.env.PORT) || 3000) }
+@Module({ controllers: [HealthController, SettingsController, AdminAuthController, AdminController] }) class AppModule {}
+async function bootstrap() { const app = await NestFactory.create(AppModule); app.enableCors({ origin: [process.env.ADMIN_CORS_ORIGIN || 'http://localhost:5174', 'http://localhost:5177', 'http://127.0.0.1:5177'], methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization'] }); await app.listen(Number(process.env.PORT) || 3000) }
 bootstrap()

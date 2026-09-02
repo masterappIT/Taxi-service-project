@@ -1,0 +1,56 @@
+<template>
+  <view class="page" :style="responsiveStyle">
+    <view class="header">
+      <image class="back" src="/static/messages/back.svg" mode="aspectFit" @tap="goBack" />
+      <text class="header-title">設定</text>
+    </view>
+    <view class="setting-row"><text>語言</text><picker class="setting-picker" mode="selector" :range="languages" :value="languageIndex" @change="changeLanguage"><view class="setting-value"><text>{{ language }}</text><text class="chevron">›</text></view></picker></view>
+    <view class="setting-row"><text>地區</text><picker class="setting-picker" mode="selector" :range="regions" :value="regionIndex" @change="changeRegion"><view class="setting-value"><text>{{ region }}</text><text class="chevron">›</text></view></picker></view>
+    <view class="setting-row"><text>貨幣</text><picker class="setting-picker" mode="selector" :range="currencies" :value="currencyIndex" @change="changeCurrency"><view class="setting-value"><text>{{ currency }}</text><text class="chevron">›</text></view></picker></view>
+    <view class="setting-row font-row"><text>字體大小</text><view class="font-options"><text class="large">A</text><text class="medium">A</text><text class="small">A</text></view></view>
+    <view class="setting-row" @tap="comingSoon('條款')"><text>條款</text></view>
+    <view class="logout" @tap="logout"><text>登出</text></view>
+  </view>
+</template>
+<script setup lang="ts">
+import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
+import { onMounted, ref } from 'vue'
+import { getSettings, updateSettings } from '../../services/api'
+import { closeCachedPage } from '../../utils/navigation'
+
+const { responsiveStyle } = useResponsiveCanvas()
+const languages = ['繁體中文', '簡體中文', '英文']
+const regions = ['香港', '澳門', '中國內地']
+const currencies = ['港幣 HK$', '人民幣 ¥']
+const currencyCodes = ['HKD', 'CNY']
+const language = ref(languages[0])
+const region = ref(regions[0])
+const currency = ref(currencies[0])
+const languageIndex = ref(0)
+const regionIndex = ref(0)
+const currencyIndex = ref(0)
+const persistSettings = () => updateSettings({ language: language.value, region: region.value, currency: currencyCodes[currencyIndex.value] }).catch(() => undefined)
+const changeLanguage = (event: { detail: { value: number } }) => { languageIndex.value = Number(event.detail.value); language.value = languages[languageIndex.value]; persistSettings() }
+const changeRegion = (event: { detail: { value: number } }) => { regionIndex.value = Number(event.detail.value); region.value = regions[regionIndex.value]; persistSettings() }
+const changeCurrency = (event: { detail: { value: number } }) => { currencyIndex.value = Number(event.detail.value); currency.value = currencies[currencyIndex.value]; persistSettings() }
+onMounted(async () => {
+  try {
+    const saved = await getSettings()
+    const savedLanguageIndex = languages.indexOf(saved.language)
+    const savedRegionIndex = regions.indexOf(saved.region)
+    const savedCurrencyIndex = currencyCodes.indexOf(saved.currency)
+    if (savedLanguageIndex >= 0) { languageIndex.value = savedLanguageIndex; language.value = languages[savedLanguageIndex] }
+    if (savedRegionIndex >= 0) { regionIndex.value = savedRegionIndex; region.value = regions[savedRegionIndex] }
+    if (savedCurrencyIndex >= 0) { currencyIndex.value = savedCurrencyIndex; currency.value = currencies[savedCurrencyIndex] }
+  } catch { /* retain defaults when the API is unavailable */ }
+})
+const logout = () => uni.showToast({ title: '已登出', icon: 'none' })
+const goBack = () => closeCachedPage('/pages/trips/trips')
+</script>
+<style scoped>
+:global(html),:global(body),:global(#app){width:100%;min-width:0;height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+.page{position:fixed;top:50%;left:50%;width:430px;height:932px;overflow:hidden;border-radius:35px;background:#F0F2F5;color:#38434A;font-family:'Noto Sans TC',sans-serif;transform:translate(-50%,-50%) scale(min(1,calc(100vw / 430px),calc(100dvh / 932px)));transform-origin:center}
+.header{position:absolute;top:0;left:0;width:430px;height:110px;overflow:hidden;border-radius:25px;background:#fff}.back{position:absolute;top:60px;left:33px;width:12px;height:25px}.header-title{position:absolute;top:58px;left:calc(50% - 18px);font-size:18px;font-weight:500}
+.setting-row{position:absolute;left:0;width:430px;height:50px;display:flex;align-items:center;box-sizing:border-box;background:#fff;font-size:16px;font-weight:350}.setting-row>text:first-child{margin-left:30px}.setting-row:nth-of-type(2){top:120px}.setting-row:nth-of-type(3){top:171px}.setting-row:nth-of-type(4){top:222px}.setting-row:nth-of-type(5){top:282px}.setting-row:nth-of-type(6){top:333px}.setting-picker{position:absolute;inset:0}.setting-value{position:absolute;top:0;right:12px;width:110px;height:50px;display:flex;align-items:center;justify-content:flex-end;box-sizing:border-box;white-space:nowrap;overflow:visible;pointer-events:none}.setting-value>text:first-child{width:84px;text-align:right;font-size:16px;line-height:1.5;flex:none}.setting-value .chevron{flex:none;margin-left:8px;font-size:22px;line-height:20px}.font-options{position:absolute;left:329px;top:7px;width:82px;height:35px;font-weight:700}.font-options text{position:absolute}.font-options .large{left:0;top:0;font-size:24px}.font-options .medium{left:36px;top:7px;font-size:16px}.font-options .small{left:67px;top:10px;font-size:12px}.logout{position:absolute;top:403px;left:36px;width:357px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#285CFC;color:#fff;font-size:16px;font-weight:500}
+@media (max-width:599px){.page{top:0;left:var(--mobile-offset,0px);height:var(--mobile-height,100dvh);border-radius:0;transform:scale(var(--mobile-scale, 1));transform-origin:top left}}
+</style>

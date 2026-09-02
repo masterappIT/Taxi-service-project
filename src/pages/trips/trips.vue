@@ -7,7 +7,7 @@
           :display-name="displayName"
           :unread-count="unreadCount"
           @notifications="openMessages"
-          @settings="comingSoon('設定')"
+          @settings="openSettings"
           @avatar="openAccount"
         />
         <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
+import { openCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
 import { ref } from 'vue'
@@ -50,23 +51,28 @@ onShow(() => {
   walletBalance.value = Number(wallet?.withdrawable) || 0
 })
 
-const goHome = () => uni.redirectTo({ url: '/pages/index/index', animationType: 'none', animationDuration: 0 })
-const openMessages = () => uni.navigateTo({ url: '/pages/messages/messages' })
-const openAccount = () => uni.navigateTo({ url: '/pages/account/account' })
-const openMembership = () => uni.navigateTo({ url: '/pages/membership/membership' })
+const goHome = () => openCachedPage('/pages/index/index')
+const openMessages = () => openCachedPage('/pages/messages/messages')
+const openSettings = () => openCachedPage('/pages/settings/settings')
+const openAccount = () => openCachedPage('/pages/account/account')
+const openMembership = () => openCachedPage('/pages/membership/membership')
 const handleWalletAction = (name: string) => {
-  if (name === '里程') return uni.navigateTo({ url: '/pages/mileage/mileage' })
-  if (name === '錢包' || name === '錢包詳細' || name === '餘額') return uni.navigateTo({ url: '/pages/wallet/wallet' })
+  if (name === '里程') return openCachedPage('/pages/mileage/mileage')
+  if (name === '錢包' || name === '錢包詳細' || name === '餘額') return openCachedPage('/pages/wallet/wallet')
   comingSoon(name)
 }
-const handleCommonAction = (name: string) => name === '邀請好友' ? uni.navigateTo({ url: '/pages/invite/invite' }) : comingSoon(name)
+const handleCommonAction = (name: string) => {
+  if (name === '常用資料') return openCachedPage('/pages/common-data/common-data')
+  if (name === '邀請好友') return openCachedPage('/pages/invite/invite')
+  comingSoon(name)
+}
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>
 
 <style scoped>
-:global(html),:global(body),:global(#app){width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:pan-y}
-:global(body){position:fixed;inset:0}
+:global(html),:global(body),:global(#app){width:100%;min-width:0;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:pan-y}
+
 .page{position:fixed;top:50%;left:50%;width:430px;height:932px;min-height:0;margin:0;overflow:hidden;background:#F0F2F5;border-radius:35px;box-sizing:border-box;color:#38434A;font-family:'Noto Sans TC',sans-serif;transform:translate(-50%,-50%) scale(min(1,calc(100vw / 430px),calc(100dvh / 932px)));transform-origin:center center}.profile-content{position:absolute;inset:0;width:430px;height:932px}.profile-canvas{position:relative;width:430px;height:932px}.upgrade-position,.wallet-position,.orders-position,.common-position{position:absolute;left:15px;width:400px}.upgrade-position{top:217px}.wallet-position{top:292px}.orders-position{top:calc(50% - 38.5px)}.common-position{top:546px}
 
-@media (max-width:599px){.page{top:0;left:0;height:var(--mobile-height,100dvh);border-radius:0;transform:scale(var(--mobile-scale,calc(100vw / 430)));transform-origin:top left}.profile-content{bottom:102px;height:auto}.profile-canvas{height:max(830px,calc(var(--mobile-height,932px) - 102px))}.orders-position{top:427.5px}.common-position{top:auto;bottom:19px}}
+@media (max-width:599px){.page{top:0;left:0;height:var(--mobile-height,100dvh);border-radius:0;transform:scale(var(--mobile-scale, 1));transform-origin:top left}.profile-content{bottom:102px;height:auto}.profile-canvas{height:max(830px,calc(var(--mobile-height,932px) - 102px))}.orders-position{top:427.5px}.common-position{top:auto;bottom:19px}}
 </style>
