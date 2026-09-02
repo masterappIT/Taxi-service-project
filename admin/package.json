@@ -1,0 +1,9 @@
+{
+  "name": "taxi-cross-border-admin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": { "dev": "vite --host 0.0.0.0", "build": "vite build", "preview": "vite preview" },
+  "dependencies": { "vite": "^5.2.8", "vue": "^3.4.21" },
+  "devDependencies": {}
+}

@@ -1,7 +1,7 @@
 <template>
   <view class="app-shell">
     <slot />
-    <view v-if="showSplash" class="splash-screen" aria-label="Taxi Cross Border 啟動畫面">
+    <view v-if="showSplash" class="splash-screen" :class="{ 'splash-leaving': splashLeaving }" aria-label="Taxi Cross Border 啟動畫面">
       <image class="splash-circle splash-circle-left" src="/static/splash/ellipse-left.svg" mode="aspectFit" />
       <image class="splash-circle splash-circle-right" src="/static/splash/ellipse-right.svg" mode="aspectFit" />
       <image class="splash-wave" src="/static/splash/wave.svg" mode="scaleToFill" />
@@ -14,15 +14,18 @@
 <script>
 export default {
   data() {
-    return { showSplash: true }
+    return { showSplash: true, splashLeaving: false }
   },
   onLaunch() {
     console.log('App Launch')
   },
   mounted() {
     setTimeout(() => {
-      this.showSplash = false
-    }, 2200)
+      this.splashLeaving = true
+      setTimeout(() => {
+        this.showSplash = false
+      }, 280)
+    }, 1900)
   },
   onShow() {
     console.log('App Show')
@@ -57,6 +60,12 @@ export default {
   overflow: hidden;
   background: #56657e;
   animation: splash-enter 300ms ease-out both;
+  transition: opacity 280ms ease-in-out, transform 280ms ease-in-out;
+}
+.splash-screen.splash-leaving {
+  opacity: 0;
+  transform: scale(1.015);
+  pointer-events: none;
 }
 .splash-screen::after {
   content: '';
