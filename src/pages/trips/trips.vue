@@ -50,13 +50,7 @@ onShow(() => {
   walletBalance.value = Number(wallet?.withdrawable) || 0
 })
 
-const goHome = () => {
-  if (getCurrentPages().length > 1) {
-    uni.navigateBack({ delta: 1 })
-    return
-  }
-  uni.reLaunch({ url: '/pages/index/index' })
-}
+const goHome = () => uni.redirectTo({ url: '/pages/index/index', animationType: 'none', animationDuration: 0 })
 const openMessages = () => uni.navigateTo({ url: '/pages/messages/messages' })
 const openAccount = () => uni.navigateTo({ url: '/pages/account/account' })
 const openMembership = () => uni.navigateTo({ url: '/pages/membership/membership' })

@@ -17,7 +17,7 @@
       </view>
     </view>
     <template v-else>
-      <HomeTravelModeSwitch v-model:mode="rideMode" class="business-layout" />
+      <HomeTravelModeSwitch v-model:mode="rideMode" layout="business" />
       <BusinessCharterPanel
         @origin="chooseOrigin"
         @destination="chooseDestination"
@@ -76,7 +76,7 @@ const useCurrentLocation = () => {
 }
 const openTrips = () => {
   tripStore.setRoute(origin.value, destination.value)
-  uni.navigateTo({ url: '/pages/trips/trips', fail: () => uni.reLaunch({ url: '/pages/trips/trips' }) })
+  uni.redirectTo({ url: '/pages/trips/trips', animationType: 'none', animationDuration: 0 })
 }
 const showComingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>

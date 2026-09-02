@@ -5,22 +5,34 @@ export const useResponsiveCanvas = () => {
   const viewportHeight = ref(932)
 
   const updateViewport = () => {
-    if (typeof window === 'undefined') return
-    viewportWidth.value = window.innerWidth
-    viewportHeight.value = window.visualViewport?.height ?? window.innerHeight
+    if (typeof window !== 'undefined') {
+      viewportWidth.value = window.innerWidth
+      viewportHeight.value = window.visualViewport?.height ?? window.innerHeight
+      return
+    }
+
+    const { windowWidth, windowHeight } = uni.getWindowInfo()
+    viewportWidth.value = windowWidth
+    viewportHeight.value = windowHeight
   }
 
   onMounted(() => {
-    if (typeof window === 'undefined') return
     updateViewport()
-    window.addEventListener('resize', updateViewport)
-    window.visualViewport?.addEventListener('resize', updateViewport)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', updateViewport)
+      window.visualViewport?.addEventListener('resize', updateViewport)
+      return
+    }
+    uni.onWindowResize(updateViewport)
   })
 
   onUnmounted(() => {
-    if (typeof window === 'undefined') return
-    window.removeEventListener('resize', updateViewport)
-    window.visualViewport?.removeEventListener('resize', updateViewport)
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', updateViewport)
+      window.visualViewport?.removeEventListener('resize', updateViewport)
+      return
+    }
+    uni.offWindowResize(updateViewport)
   })
 
   const responsiveStyle = computed(() => {

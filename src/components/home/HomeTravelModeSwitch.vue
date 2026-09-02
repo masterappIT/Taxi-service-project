@@ -1,5 +1,5 @@
 <template>
-  <view class="travel-mode-switch" role="tablist" aria-label="打車方式">
+  <view class="travel-mode-switch" :class="{ 'business-layout': layout === 'business' }" role="tablist" aria-label="打車方式">
     <view
       v-for="option in options"
       :key="option.value"
@@ -17,7 +17,10 @@
 <script setup lang="ts">
 type TravelMode = 'cross-border' | 'business'
 
-defineProps<{ mode: TravelMode }>()
+defineProps<{
+  mode: TravelMode
+  layout?: 'default' | 'business'
+}>()
 const emit = defineEmits<{ 'update:mode': [mode: TravelMode] }>()
 
 const options: { value: TravelMode; label: string }[] = [
