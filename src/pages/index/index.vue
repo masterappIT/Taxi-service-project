@@ -1,10 +1,9 @@
 <template>
   <view class="page">
-    <HomeMap v-if="rideMode === 'cross-border'" />
     <HomeHeader v-if="rideMode === 'cross-border'" />
     <HomeTravelModeSwitch v-model:mode="rideMode" :class="{ 'business-layout': rideMode === 'business' }" />
     <template v-if="rideMode === 'cross-border'">
-      <HomeMapActions @location="useCurrentLocation" @map="openMap" />
+      <HomeMapActions @location="useCurrentLocation" />
       <HomeRoutePanel
         v-model:mode="travelMode"
         @origin="chooseOrigin"
@@ -31,7 +30,6 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useTripStore } from '../../stores/trip'
-import HomeMap from '../../components/home/HomeMap.vue'
 import HomeHeader from '../../components/home/HomeHeader.vue'
 import HomeTravelModeSwitch from '../../components/home/HomeTravelModeSwitch.vue'
 import HomeMapActions from '../../components/home/HomeMapActions.vue'
@@ -65,14 +63,6 @@ const useCurrentLocation = () => {
     success: ({ latitude, longitude }) => uni.showToast({ title: `定位成功 ${latitude.toFixed(4)},${longitude.toFixed(4)}`, icon: 'none' }),
     fail: () => uni.showToast({ title: '無法取得位置，請允許定位權限', icon: 'none' })
   })
-}
-const openMap = () => {
-  // #ifdef APP-PLUS
-  plus.runtime.openURL('https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20West%20Kowloon%20Station')
-  // #endif
-  // #ifdef H5
-  window.open('https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20West%20Kowloon%20Station', '_blank')
-  // #endif
 }
 const openTrips = () => {
   tripStore.setRoute(origin.value, destination.value)

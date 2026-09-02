@@ -6,8 +6,8 @@
       @settings="comingSoon('設定')"
       @avatar="comingSoon('頭像')"
     />
-    <view class="upgrade-position" @tap="comingSoon('會員')"><UpgradeCard /></view>
-    <view class="wallet-position" @tap="comingSoon('錢包')"><WalletCard /></view>
+    <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
+    <view class="wallet-position"><WalletCard @tap="handleWalletAction" /></view>
     <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
     <view class="common-position" @tap="comingSoon('常用功能')"><CommonActions /></view>
     <ProfileBottomNav @home="goHome" />
@@ -22,7 +22,15 @@ import OrdersCard from '../../components/profile/OrdersCard.vue'
 import CommonActions from '../../components/profile/CommonActions.vue'
 import ProfileBottomNav from '../../components/profile/ProfileBottomNav.vue'
 
-const goHome = () => uni.navigateBack({ delta: 1, fail: () => uni.reLaunch({ url: '/pages/index/index' }) })
+const goHome = () => {
+  if (getCurrentPages().length > 1) {
+    uni.navigateBack({ delta: 1 })
+    return
+  }
+  uni.reLaunch({ url: '/pages/index/index' })
+}
+const openMembership = () => uni.navigateTo({ url: '/pages/membership/membership' })
+const handleWalletAction = (name: string) => name === '里程' ? uni.navigateTo({ url: '/pages/mileage/mileage' }) : comingSoon(name)
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>
 
