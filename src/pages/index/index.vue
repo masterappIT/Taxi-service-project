@@ -54,6 +54,9 @@
   <InvitePage v-if="visitedPages.has('/pages/invite/invite')" v-show="activePagePath === '/pages/invite/invite'" />
   <MessagesPage v-if="visitedPages.has('/pages/messages/messages')" v-show="activePagePath === '/pages/messages/messages'" />
   <MessageDetailPage v-if="visitedPages.has('/pages/messages/detail')" v-show="activePagePath === '/pages/messages/detail'" />
+  <OrdersPage v-if="visitedPages.has('/pages/orders/orders')" v-show="activePagePath === '/pages/orders/orders'" />
+  <OrderDetailPage v-if="visitedPages.has('/pages/orders/detail')" v-show="activePagePath === '/pages/orders/detail'" />
+  <VehicleSelectPage v-if="visitedPages.has('/pages/vehicles/select')" v-show="activePagePath === '/pages/vehicles/select'" />
   <AccountPage v-if="visitedPages.has('/pages/account/account')" v-show="activePagePath === '/pages/account/account'" />
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
@@ -87,6 +90,9 @@ import MileagePage from '../mileage/mileage.vue'
 import InvitePage from '../invite/invite.vue'
 import MessagesPage from '../messages/messages.vue'
 import MessageDetailPage from '../messages/detail.vue'
+import OrdersPage from '../orders/orders.vue'
+import OrderDetailPage from '../orders/detail.vue'
+import VehicleSelectPage from '../vehicles/select.vue'
 import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'
@@ -134,7 +140,17 @@ const selectCurrentLocation = () => {
   addressPicker.value = null
 }
 const chooseDepartureTime = () => { bookingTimePicker.value = true }
-const confirmDepartureTime = (value: string) => { departureTime.value = value; bookingTimePicker.value = false }
+const confirmDepartureTime = (value: string) => {
+  if (travelMode.value === 'airport' && !flightNumber.value.trim()) {
+    uni.showToast({ title: '請先填寫航班號', icon: 'none' })
+    return
+  }
+  departureTime.value = value
+  tripStore.setRoute(origin.value, destination.value)
+  tripStore.setDepartureTime(value)
+  bookingTimePicker.value = false
+  openCachedPage('/pages/vehicles/select')
+}
 
 const useCurrentLocation = (closePicker = false) => {
   uni.getLocation({

@@ -12,7 +12,7 @@
         />
         <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
         <view class="wallet-position"><WalletCard :balance="walletBalance" @select="handleWalletAction" /></view>
-        <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
+        <view class="orders-position"><OrdersCard @select="handleOrderAction" /></view>
         <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
       </view>
     </view>
@@ -57,6 +57,10 @@ const openMessages = () => openCachedPage('/pages/messages/messages')
 const openSettings = () => openCachedPage('/pages/settings/settings')
 const openAccount = () => openCachedPage('/pages/account/account')
 const openMembership = () => openCachedPage('/pages/membership/membership')
+const handleOrderAction = (name: string) => {
+  if (name === '全部訂單') return openCachedPage('/pages/orders/orders')
+  comingSoon(name)
+}
 const handleWalletAction = (name: string) => {
   if (name === '里程') return openCachedPage('/pages/mileage/mileage')
    if (name === '優惠券') return openCachedPage('/pages/coupons/coupons')
