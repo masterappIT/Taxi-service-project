@@ -36,15 +36,20 @@ export const useResponsiveCanvas = () => {
   })
 
   const responsiveStyle = computed(() => {
-    if (viewportWidth.value >= 600) return {}
-    const horizontalScale = viewportWidth.value / 430
+    const scale = viewportWidth.value / 430
+    const logicalHeight = viewportHeight.value / scale
     return {
       width: '430px',
-      height: `${viewportHeight.value}px`,
-      transform: `scaleX(${horizontalScale})`,
+      height: `${logicalHeight}px`,
+      transform: `scale(${scale})`,
       transformOrigin: 'top left',
       top: '0',
-      left: '0'
+      right: 'auto',
+      bottom: 'auto',
+      left: '0',
+      margin: '0',
+      '--mobile-scale': `${scale}`,
+      '--mobile-height': `${logicalHeight}px`
     }
   })
 

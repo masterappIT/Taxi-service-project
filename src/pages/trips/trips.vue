@@ -1,6 +1,6 @@
 <template>
   <view class="page" :style="responsiveStyle">
-    <scroll-view class="profile-content" scroll-y>
+    <view class="profile-content">
       <view class="profile-canvas">
         <ProfileHeader
           :avatar-url="avatarUrl"
@@ -15,7 +15,7 @@
         <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
         <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
       </view>
-    </scroll-view>
+    </view>
     <ProfileBottomNav @home="goHome" @service="openCustomerService" />
   </view>
 </template>
