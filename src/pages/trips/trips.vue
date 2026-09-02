@@ -1,22 +1,29 @@
 <template>
-  <view class="page">
-    <ProfileHeader
-      :avatar-url="avatarUrl"
-      :display-name="displayName"
-      :unread-count="unreadCount"
-      @notifications="openMessages"
-      @settings="comingSoon('設定')"
-      @avatar="openAccount"
-    />
-    <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
-    <view class="wallet-position"><WalletCard :balance="walletBalance" @select="handleWalletAction" /></view>
-    <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
-    <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
+  <view class="page" :style="responsiveStyle">
+    <scroll-view class="profile-content" scroll-y>
+      <view class="profile-canvas">
+        <ProfileHeader
+          :avatar-url="avatarUrl"
+          :display-name="displayName"
+          :unread-count="unreadCount"
+          @notifications="openMessages"
+          @settings="comingSoon('設定')"
+          @avatar="openAccount"
+        />
+        <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
+        <view class="wallet-position"><WalletCard :balance="walletBalance" @select="handleWalletAction" /></view>
+        <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
+        <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
+      </view>
+    </scroll-view>
     <ProfileBottomNav @home="goHome" />
   </view>
 </template>
 
 <script setup lang="ts">
+import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
+
+const { responsiveStyle } = useResponsiveCanvas()
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import ProfileHeader from '../../components/profile/ProfileHeader.vue'
@@ -63,7 +70,9 @@ const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發
 </script>
 
 <style scoped>
-:global(html),:global(body),:global(#app){width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:none}
+:global(html),:global(body),:global(#app){width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:pan-y}
 :global(body){position:fixed;inset:0}
-.page{position:fixed;top:50%;left:50%;width:430px;height:932px;min-height:0;margin:0;overflow:hidden;background:#F0F2F5;border-radius:35px;box-sizing:border-box;color:#38434A;font-family:'Noto Sans TC',sans-serif;transform:translate(-50%,-50%) scale(min(1,calc(100vw / 430px),calc(100vh / 932px)));transform-origin:center center}.upgrade-position,.wallet-position,.orders-position,.common-position{position:absolute;left:15px;width:400px}.upgrade-position{top:217px}.wallet-position{top:292px}.orders-position{top:calc(50% - 38.5px)}.common-position{top:546px}
+.page{position:fixed;top:50%;left:50%;width:430px;height:932px;min-height:0;margin:0;overflow:hidden;background:#F0F2F5;border-radius:35px;box-sizing:border-box;color:#38434A;font-family:'Noto Sans TC',sans-serif;transform:translate(-50%,-50%) scale(min(1,calc(100vw / 430px),calc(100dvh / 932px)));transform-origin:center center}.profile-content{position:absolute;inset:0;width:430px;height:932px}.profile-canvas{position:relative;width:430px;height:932px}.upgrade-position,.wallet-position,.orders-position,.common-position{position:absolute;left:15px;width:400px}.upgrade-position{top:217px}.wallet-position{top:292px}.orders-position{top:calc(50% - 38.5px)}.common-position{top:546px}
+
+@media (max-width:599px){.page{top:0;left:0;height:var(--mobile-height,100dvh);border-radius:0;transform:scale(var(--mobile-scale,calc(100vw / 430)));transform-origin:top left}.profile-content{bottom:102px;height:auto}.profile-canvas{height:max(830px,calc(var(--mobile-height,932px) - 102px))}.orders-position{top:427.5px}.common-position{top:auto;bottom:19px}}
 </style>

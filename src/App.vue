@@ -44,7 +44,7 @@ export default {
   background: #56657e;
   overflow: hidden;
   overscroll-behavior: none;
-  touch-action: none;
+  touch-action: pan-y;
 }
 .splash-screen {
   width: 100%;
