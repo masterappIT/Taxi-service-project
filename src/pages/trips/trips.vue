@@ -9,7 +9,7 @@
       @avatar="openAccount"
     />
     <view class="upgrade-position"><UpgradeCard @tap="openMembership" /></view>
-    <view class="wallet-position"><WalletCard @select="handleWalletAction" /></view>
+    <view class="wallet-position"><WalletCard :balance="walletBalance" @select="handleWalletAction" /></view>
     <view class="orders-position" @tap="comingSoon('訂單')"><OrdersCard /></view>
     <view class="common-position"><CommonActions @select="handleCommonAction" /></view>
     <ProfileBottomNav @home="goHome" />
@@ -30,6 +30,7 @@ const totalMessages = 4
 const unreadCount = ref(totalMessages)
 const avatarUrl = ref('')
 const displayName = ref('John')
+const walletBalance = ref(0)
 
 onShow(() => {
   const profile = uni.getStorageSync('account-profile')
@@ -38,6 +39,8 @@ onShow(() => {
   const saved = uni.getStorageSync('read-message-types')
   const readCount = Array.isArray(saved) ? new Set(saved).size : 0
   unreadCount.value = Math.max(0, totalMessages - readCount)
+  const wallet = uni.getStorageSync('wallet-state')
+  walletBalance.value = Number(wallet?.withdrawable) || 0
 })
 
 const goHome = () => {
@@ -50,7 +53,11 @@ const goHome = () => {
 const openMessages = () => uni.navigateTo({ url: '/pages/messages/messages' })
 const openAccount = () => uni.navigateTo({ url: '/pages/account/account' })
 const openMembership = () => uni.navigateTo({ url: '/pages/membership/membership' })
-const handleWalletAction = (name: string) => name === '里程' ? uni.navigateTo({ url: '/pages/mileage/mileage' }) : comingSoon(name)
+const handleWalletAction = (name: string) => {
+  if (name === '里程') return uni.navigateTo({ url: '/pages/mileage/mileage' })
+  if (name === '錢包' || name === '錢包詳細' || name === '餘額') return uni.navigateTo({ url: '/pages/wallet/wallet' })
+  comingSoon(name)
+}
 const handleCommonAction = (name: string) => name === '邀請好友' ? uni.navigateTo({ url: '/pages/invite/invite' }) : comingSoon(name)
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>

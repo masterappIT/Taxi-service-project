@@ -7,7 +7,8 @@
     { "path": "pages/invite/invite", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/messages/messages", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/messages/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
-    { "path": "pages/account/account", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } }
+    { "path": "pages/account/account", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/wallet/wallet", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
