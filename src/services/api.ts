@@ -26,4 +26,55 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
   return response.data as LocationDetails
 }
 
+export type RecommendedAddress = {
+  id: string
+  region: '大陸' | '香港' | '澳門'
+  name: string
+  address: string
+  enabled: boolean
+  order: number
+}
+
+export async function listRecommendedAddresses(): Promise<RecommendedAddress[]> {
+  const response = await uni.request({ url: `${API_BASE_URL}/recommended-addresses` })
+  if (response.statusCode >= 400) throw new Error('推薦地址暫時無法載入')
+  return (response.data as { data: RecommendedAddress[] }).data
+}
+
+export type SupportMessage = {
+  id: string
+  direction: 'inbound' | 'outbound' | string
+  content: { type?: string; text?: string } | string
+  createdAt: string
+}
+
+let supportToken = ''
+
+async function supportRequest<T>(path: string, options: { method?: 'GET' | 'POST'; data?: unknown } = {}): Promise<T> {
+  const response = await uni.request({
+    url: `${API_BASE_URL}/support${path}`,
+    method: options.method || 'GET',
+    data: options.data,
+    header: supportToken ? { Authorization: `Bearer ${supportToken}` } : {}
+  })
+  if (response.statusCode >= 400) throw new Error((response.data as { message?: string })?.message || '客服服務暫時無法使用')
+  return response.data as T
+}
+
+export async function startSupportSession(riderId: string, displayName?: string) {
+  const result = await supportRequest<{ token: string; expiresAt: string }>('/session', { method: 'POST', data: { riderId, displayName } })
+  supportToken = result.token
+  return result
+}
+
+export async function listSupportMessages(): Promise<SupportMessage[]> {
+  const result = await supportRequest<{ data: SupportMessage[] }>('/messages')
+  return result.data
+}
+
+export async function sendSupportMessage(text: string): Promise<SupportMessage> {
+  const clientId = `taxi-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  return supportRequest<SupportMessage>('/messages', { method: 'POST', data: { text, clientId } })
+}
+
 export type { CrossBorderTrip }

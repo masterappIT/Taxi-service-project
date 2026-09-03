@@ -9,19 +9,19 @@
         <view class="location-field" @tap="$emit('origin')">
           <image class="pin origin-pin" src="/static/home/business/origin.svg" mode="scaleToFill" />
           <view class="region-select">
-            <text>香港</text>
+            <text>{{ props.originRegion }}</text>
             <image src="/static/home/business/dropdown.svg" mode="scaleToFill" />
           </view>
-          <text class="location-value">香港國際機場</text>
+          <text :class="props.originPlace ? 'location-value' : 'location-placeholder'">{{ props.originPlace || '請選擇出發地' }}</text>
         </view>
 
         <view class="location-field destination-field" @tap="$emit('destination')">
           <image class="pin destination-pin" src="/static/home/business/destination.svg" mode="scaleToFill" />
           <view class="region-select">
-            <text>大陸</text>
+            <text>{{ props.destinationRegion }}</text>
             <image src="/static/home/business/dropdown.svg" mode="scaleToFill" />
           </view>
-          <text class="location-placeholder">請選擇最終結束目的地</text>
+          <text :class="props.destinationPlace ? 'location-value' : 'location-placeholder'">{{ props.destinationPlace || '請選擇最終結束目的地' }}</text>
         </view>
 
         <view class="detail-field date-field" @tap="$emit('date-time')">
@@ -52,6 +52,13 @@
 </template>
 
 <script setup lang="ts">
+const props = defineProps<{
+  originRegion: string
+  originPlace: string
+  destinationRegion: string
+  destinationPlace: string
+}>()
+
 defineEmits<{
   origin: []
   destination: []

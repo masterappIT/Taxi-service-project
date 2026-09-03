@@ -52,7 +52,7 @@ onShow(() => {
 })
 
 const goHome = () => openCachedPage('/pages/index/index')
-const openCustomerService = () => uni.showToast({ title: '客服功能開發中', icon: 'none' })
+const openCustomerService = () => openCachedPage('/pages/support/chat')
 const openMessages = () => openCachedPage('/pages/messages/messages')
 const openSettings = () => openCachedPage('/pages/settings/settings')
 const openAccount = () => openCachedPage('/pages/account/account')
@@ -71,6 +71,7 @@ const handleCommonAction = (name: string) => {
   if (name === '常用資料') return openCachedPage('/pages/common-data/common-data')
   if (name === '邀請好友') return openCachedPage('/pages/invite/invite')
   if (name === '我的投訴') return openCachedPage('/pages/complaints/complaints')
+  if (name === '聯繫客服') return openCustomerService()
   comingSoon(name)
 }
 const comingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })

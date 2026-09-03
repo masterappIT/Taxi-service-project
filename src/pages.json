@@ -15,7 +15,8 @@
     { "path": "pages/wallet/wallet", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/coupons/coupons", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/common-data/common-data", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
-    { "path": "pages/complaints/complaints", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } }
+    { "path": "pages/complaints/complaints", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
+    { "path": "pages/support/chat", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
