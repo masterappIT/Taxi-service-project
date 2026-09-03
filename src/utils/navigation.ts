@@ -64,3 +64,17 @@ export const closeCachedPage = (fallbackUrl: string) => {
   }
   return openCachedPage(fallbackUrl)
 }
+
+export const swipeBack = () => {
+  // #ifdef MP-WEIXIN
+  if (embeddedHostActive && cachedPageStack.value.length > 1) {
+    cachedPageStack.value = cachedPageStack.value.slice(0, -1)
+    cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
+    return
+  }
+  // #endif
+
+  if (getCurrentPages().length > 1) {
+    return uni.navigateBack({ delta: 1, animationType: 'none', animationDuration: 0 })
+  }
+}
