@@ -2,7 +2,7 @@
   <view class="page" :style="responsiveStyle">
     <view class="header">
       <view class="back-button" @tap="goBack"><image src="/static/vehicles/back.svg" mode="aspectFit" /></view>
-      <view class="route-summary">
+      <view class="route-summary" @tap="editSheetOpen = true">
         <image class="origin-icon" src="/static/vehicles/origin.svg" mode="aspectFit" /><text class="origin">{{ originLabel }}</text>
         <image class="route-icon" src="/static/vehicles/route.svg" mode="aspectFit" />
         <image class="destination-icon" src="/static/vehicles/destination.svg" mode="aspectFit" /><text class="destination">{{ destinationLabel }}</text>
@@ -23,6 +23,14 @@
         </view>
       </view><view class="bottom-space" />
     </scroll-view>
+    <TripEditSheet
+      v-if="editSheetOpen"
+      :origin="tripStore.activeTrip?.origin || '香港 · 九龍站'"
+      :destination="tripStore.activeTrip?.destination || '廣東 · 深圳灣口岸'"
+      :departure-time="tripStore.departureTime"
+      @close="editSheetOpen = false"
+      @confirm="saveTripChanges"
+    />
   </view>
 </template>
 <script setup lang="ts">
@@ -30,10 +38,11 @@ import { computed, ref } from 'vue'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { useTripStore } from '../../stores/trip'
 import { openCachedPage } from '../../utils/navigation'
+import TripEditSheet from '../../components/home/TripEditSheet.vue'
 type Category='all'|'standard-mpv'|'premium-mpv'|'standard-car'|'premium-car'
 interface Vehicle{id:string;brand?:string;model?:string;series?:string;seats:number;price:number;image:string;imageClass?:string;doubleImage?:boolean;selectable?:boolean;modelChoice?:boolean}
 interface VehicleGroup{category:Exclude<Category,'all'>;title:string;vehicles:Vehicle[]}
-const {responsiveStyle}=useResponsiveCanvas();const tripStore=useTripStore();const activeCategory=ref<Category>('all');const selectedVehicle=ref('premium-alphard')
+const {responsiveStyle}=useResponsiveCanvas();const tripStore=useTripStore();const activeCategory=ref<Category>('all');const selectedVehicle=ref('premium-alphard');const editSheetOpen=ref(false)
 const tabs:Array<{label:string;value:Category}>=[{label:'全部',value:'all'},{label:'普通MPV',value:'standard-mpv'},{label:'高級MPV',value:'premium-mpv'},{label:'普通轎車',value:'standard-car'},{label:'頂級轎車',value:'premium-car'}]
 const groups:VehicleGroup[]=[
 {category:'standard-mpv',title:'普通跨境商務車',vehicles:[{id:'standard-mpv',seats:6,price:700,image:'',doubleImage:true,modelChoice:true}]},
@@ -41,8 +50,19 @@ const groups:VehicleGroup[]=[
 {category:'standard-car',title:'普通跨境轎車',vehicles:[{id:'tesla-s',brand:'Tesla',model:'Model',series:'S',seats:5,price:800,image:'/static/vehicles/tesla-s.png',selectable:true,imageClass:'tesla-s'},{id:'tesla-x',brand:'Tesla',model:'Model',series:'X',seats:7,price:800,image:'/static/vehicles/tesla-x.png',selectable:true},{id:'tesla-y',brand:'Tesla',model:'Model',series:'Y',seats:5,price:800,image:'/static/vehicles/tesla-y.png',selectable:true},{id:'tesla-3',brand:'Tesla',model:'Model',series:'3',seats:5,price:800,image:'/static/vehicles/tesla-3.png',selectable:true}]},
 {category:'premium-car',title:'頂級跨境轎車',vehicles:[]}]
 const visibleGroups=computed(()=>activeCategory.value==='all'?groups.filter(group=>group.vehicles.length):groups.filter(group=>group.category===activeCategory.value))
-const shortPlace=(value:string|undefined,fallback:string)=>value?.split(/[·]/)[0].trim()||fallback
-const originLabel=computed(()=>shortPlace(tripStore.activeTrip?.origin,'香港'));const destinationLabel=computed(()=>shortPlace(tripStore.activeTrip?.destination,'深圳'));const bookingTime=computed(()=>tripStore.departureTime||'March 15 2024 14:00')
+const cityName=(value:string|undefined,fallback:string)=>{
+  const text=value?.trim() || ''
+  if (text.includes('香港')) return '香港'
+  if (text.includes('深圳') || text.includes('廣東')) return '深圳'
+  if (text.includes('廣州')) return '廣州'
+  if (text.includes('珠海')) return '珠海'
+  if (text.includes('澳門')) return '澳門'
+  return text.split(/[·，,\s]/)[0] || fallback
+}
+const originLabel=computed(()=>cityName(tripStore.activeTrip?.origin,'香港'))
+const destinationLabel=computed(()=>cityName(tripStore.activeTrip?.destination,'深圳'))
+const bookingTime=computed(()=>tripStore.departureTime||'March 15 2024 14:00')
+const saveTripChanges=(origin:string,destination:string,departureTime:string)=>{tripStore.setRoute(origin,destination);tripStore.setDepartureTime(departureTime);editSheetOpen.value=false}
 const goBack=()=>openCachedPage('/pages/index/index')
 </script>
 <style scoped>

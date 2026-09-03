@@ -1,15 +1,29 @@
 <template>
-  <view class="booking-mask" @tap.self="close">
-    <view class="booking-sheet">
+  <view class="booking-mask" @tap="close">
+    <view class="booking-sheet" @tap.stop>
       <view class="sheet-head"><text class="sheet-title">預約時間</text><text class="sheet-close" @tap="close">×</text></view>
-      <view class="picker-columns">
-        <picker class="picker-column" mode="selector" :range="dateOptions" :value="dateIndex" @change="dateIndex = Number($event.detail.value)">
-          <view class="picker-value"><text>{{ dateOptions[dateIndex] }}</text><text class="picker-chevron">⌄</text></view>
-        </picker>
-        <picker class="picker-column" mode="selector" :range="timeOptions" :value="timeIndex" @change="timeIndex = Number($event.detail.value)">
-          <view class="picker-value"><text>{{ timeOptions[timeIndex] }}</text><text class="picker-chevron">⌄</text></view>
-        </picker>
-      </view>
+      <scroll-view class="date-options" scroll-x :show-scrollbar="false">
+        <view class="date-options-row">
+          <view
+            v-for="(option, index) in dateOptions"
+            :key="option"
+            class="option-chip date-chip"
+            :class="{ selected: index === dateIndex }"
+            @tap.stop="selectDate(index)"
+          >{{ option }}</view>
+        </view>
+      </scroll-view>
+      <scroll-view class="time-options" scroll-y :show-scrollbar="false">
+        <view class="time-options-grid">
+          <view
+            v-for="(option, index) in timeOptions"
+            :key="option"
+            class="option-chip time-chip"
+            :class="{ selected: index === timeIndex }"
+            @tap.stop="selectTime(index)"
+          >{{ option }}</view>
+        </view>
+      </scroll-view>
       <text class="booking-hint">可預約未來 30 天行程，最早提前 1 小時</text>
       <button class="confirm-button" @tap="confirm">確認預約時間</button>
     </view>
@@ -17,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 const emit = defineEmits<{ close: []; confirm: [value: string] }>()
 const now = new Date()
@@ -38,7 +52,11 @@ const timeOptions = computed(() => {
     return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`
   })
 })
-watch(dateIndex, () => { timeIndex.value = 0 })
+const selectDate = (index: number) => {
+  dateIndex.value = index
+  timeIndex.value = 0
+}
+const selectTime = (index: number) => { timeIndex.value = index }
 const close = () => emit('close')
 const confirm = () => {
   const date = dates[dateIndex.value]
@@ -47,5 +65,5 @@ const confirm = () => {
 </script>
 
 <style scoped>
-.booking-mask{position:absolute;inset:0;z-index:40;background:rgba(20,28,42,.42);display:flex;align-items:flex-end}.booking-sheet{width:430px;min-height:265px;padding:22px 20px 28px;box-sizing:border-box;border-radius:25px 25px 0 0;background:#fff;color:#38434a;box-shadow:0 -8px 24px rgba(40,53,76,.18)}.sheet-head{display:flex;align-items:center;justify-content:space-between}.sheet-title{font-size:20px;font-weight:600}.sheet-close{font-size:28px;line-height:20px;color:#8995a8}.picker-columns{display:flex;gap:12px;margin-top:22px}.picker-column{flex:1}.picker-value{height:48px;padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;border:1px solid #d9dfe8;border-radius:12px;background:#f7f8fa;font-size:16px}.picker-chevron{color:#8995a8;font-size:18px}.booking-hint{display:block;margin-top:12px;color:#8995a8;font-size:12px}.confirm-button{height:48px;margin-top:20px;border:0;border-radius:12px;background:#285cfc;color:#fff;font-size:16px;line-height:48px}.confirm-button::after{border:0}
+.booking-mask{position:absolute;inset:0;z-index:40;background:rgba(20,28,42,.42);display:flex;align-items:flex-end}.booking-sheet{width:430px;height:360px;padding:22px 20px 28px;box-sizing:border-box;border-radius:25px 25px 0 0;background:#fff;color:#38434a;box-shadow:0 -8px 24px rgba(40,53,76,.18);display:flex;flex-direction:column}.sheet-head{display:flex;align-items:center;justify-content:space-between;flex:none}.sheet-title{font-size:20px;font-weight:600}.sheet-close{font-size:28px;line-height:20px;color:#8995a8}.date-options{margin-top:22px;white-space:nowrap;flex:none}.date-options-row{display:flex;gap:8px}.time-options{height:auto;min-height:0;flex:1;margin-top:12px}.time-options-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding-bottom:2px}.option-chip{box-sizing:border-box;border:1px solid #d9dfe8;border-radius:10px;background:#f7f8fa;color:#38434a;text-align:center}.date-chip{display:inline-flex;align-items:center;height:42px;padding:0 14px;font-size:14px}.time-chip{height:40px;line-height:38px;font-size:14px}.option-chip.selected{border-color:#285cfc;background:#285cfc;color:#fff}.booking-hint{display:block;margin-top:12px;color:#8995a8;font-size:12px;flex:none}.confirm-button{height:48px;margin-top:20px;border:0;border-radius:12px;background:#285cfc;color:#fff;font-size:16px;line-height:48px;flex:none}.confirm-button::after{border:0}
 </style>
