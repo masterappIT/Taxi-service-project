@@ -13,7 +13,7 @@
 
     <view class="actions">
       <view class="action withdraw" @tap="openAmountDialog('withdraw')"><text>兌現</text></view>
-      <view class="action top-up" @tap="openAmountDialog('topUp')"><text>增值</text></view>
+      <view class="action top-up" @tap="openTopUp"><text>增值</text></view>
     </view>
 
     <view class="records-link" @tap="showRecords">
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 
-import { closeCachedPage } from '../../utils/navigation'
+import { closeCachedPage, openCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
 import { reactive, ref } from 'vue'
@@ -86,6 +86,7 @@ const openAmountDialog = (type: ActionType) => {
     }
   })
 }
+const openTopUp = () => openCachedPage('/pages/top-up/top-up')
 const showRecords = () => { recordsVisible.value = true }
 const openSettings = () => uni.showActionSheet({ itemList: ['付款設定', '貨幣設定', '交易通知'], success: () => uni.showToast({ title: '設定已保存', icon: 'success' }) })
 const goBack = () => closeCachedPage('/pages/trips/trips')
