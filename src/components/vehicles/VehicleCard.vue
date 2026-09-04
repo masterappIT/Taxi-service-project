@@ -1,7 +1,7 @@
 <template>
   <view class="vehicle-card" @tap="selectable && emit('select')">
     <view v-if="vehicle.brand" class="vehicle-name"><text class="brand">{{ vehicle.brand }}</text><text> {{ vehicle.model }}</text><text class="series">{{ vehicle.series }}</text></view>
-    <image v-if="selectable" class="radio" :src="selected ? '/static/vehicles/radio-selected.svg' : '/static/vehicles/radio.svg'" mode="aspectFit" />
+    <image v-if="selectable" class="radio" src="/static/vehicles/radio.svg" mode="aspectFit" />
     <view class="vehicle-image-frame">
       <image class="vehicle-image" :class="`vehicle-${vehicle.id}`" :src="vehicle.image" mode="scaleToFill" />
     </view>
