@@ -15,33 +15,28 @@
         <view v-for="plan in plans" :key="plan.id" :class="['plan-card',{selected:selectedPlan===plan.id}]" @tap="selectedPlan=plan.id">
           <view :class="['plan-mark',plan.id]">{{plan.name.slice(0,1)}}</view>
           <view class="plan-copy"><view class="plan-title-row"><text class="plan-name">{{plan.name}}</text><text v-if="plan.recommended" class="recommend">最受歡迎</text></view><text class="plan-benefit">{{plan.benefits[0]}} · {{plan.benefits[1]}}</text></view>
-          <view class="plan-price"><view><strong>{{format(period==='month'?plan.monthly:plan.yearly)}}</strong></view><text>/{{period==='month'?'月':'年'}}</text></view><view class="selector"><view /></view>
+          <view class="plan-price"><view><text>HK$</text><strong>{{period==='month'?plan.monthly:plan.yearly}}</strong></view><text>/{{period==='month'?'月':'年'}}</text></view><view class="selector"><view /></view>
         </view>
       </view>
       <view class="benefits-card"><view class="card-title-row"><text class="section-title">精選會員權益</text><text class="more" @tap="showPreview">全部權益 ›</text></view><view class="benefit-grid"><view v-for="item in benefits" :key="item.title" class="benefit-item"><view :class="['benefit-icon',item.tone]">{{item.icon}}</view><text class="benefit-title">{{item.title}}</text><text class="benefit-desc">{{item.desc}}</text></view></view></view>
       <view class="compare-card"><view class="card-title-row"><text class="section-title">方案權益比較</text><text class="compare-tag">黑金推薦</text></view><view class="compare-row compare-header"><text>會員權益</text><text>銀卡</text><text>黑金</text></view><view v-for="row in comparisons" :key="row.name" class="compare-row"><text>{{row.name}}</text><text>{{row.silver}}</text><text class="brand-value">{{row.gold}}</text></view></view>
       <view class="agreement">升級即表示同意《會員服務協議》與《自動續費規則》</view><view class="bottom-space" />
     </scroll-view>
-    <view class="checkout"><view class="checkout-price"><text>應付金額</text><view><strong>{{format(currentPrice)}}</strong><small>/{{period==='month'?'月':'年'}}</small></view></view><view class="upgrade-button" @tap="showPreview"><text>立即升級</text><text>›</text></view></view>
+    <view class="checkout"><view class="checkout-price"><text>應付金額</text><view><small>HK$</small><strong>{{currentPrice}}</strong><small>/{{period==='month'?'月':'年'}}</small></view></view><view class="upgrade-button" @tap="showPreview"><text>立即升級</text><text>›</text></view></view>
   </view>
 </template>
 <script setup lang="ts">
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 
-import { listMembershipPlans, type MembershipPlan } from '../../services/api'
+import { closeCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
-import { computed, onMounted, ref } from 'vue'
-import { closeCachedPage } from '../../utils/navigation'
-import { useCurrency } from '../../composables/useCurrency'
-const { format, loadSettings } = useCurrency()
-const plans=ref<MembershipPlan[]>([])
-const fallbackPlans: MembershipPlan[]=[{id:'silver',level:'SILVER',name:'銀卡會員',monthly:68,yearly:688,recommended:false,benefits:['每月 2 張乘車券','優先客服通道','免費等候 10 分鐘'],enabled:true,order:1},{id:'black',level:'BLACK GOLD',name:'黑金會員',monthly:128,yearly:1288,recommended:true,benefits:['每月 4 張乘車券','專屬行程管家','免費等候 20 分鐘'],enabled:true,order:2},{id:'diamond',level:'DIAMOND',name:'鑽石會員',monthly:228,yearly:2288,recommended:false,benefits:['專屬車型升級','機場快速接送','全年專屬客服'],enabled:true,order:3}]
-const selectedPlan=ref('black')
+import {computed,ref} from 'vue'
+const period=ref<'month'|'year'>('year');const selectedPlan=ref('black')
+const plans=[{id:'silver',level:'SILVER',name:'銀卡會員',monthly:68,yearly:688,benefits:['每月 2 張乘車券','優先客服通道','免費等候 10 分鐘']},{id:'black',level:'BLACK GOLD',name:'黑金會員',monthly:128,yearly:1288,recommended:true,benefits:['每月 4 張乘車券','專屬行程管家','免費等候 20 分鐘']},{id:'diamond',level:'DIAMOND',name:'鑽石會員',monthly:228,yearly:2288,benefits:['專屬車型升級','機場快速接送','全年專屬客服']}]
 const benefits=[{icon:'券',title:'會員乘車券',desc:'每月自動發放',tone:'blue'},{icon:'優',title:'優先派車',desc:'繁忙時段優先',tone:'green'},{icon:'候',title:'免費等候',desc:'最高 20 分鐘',tone:'purple'},{icon:'管',title:'專屬管家',desc:'一對一行程服務',tone:'gold'}]
 const comparisons=[{name:'乘車券',silver:'2 張/月',gold:'4 張/月'},{name:'訂單折扣',silver:'95 折',gold:'9 折'},{name:'免費取消',silver:'1 次/月',gold:'3 次/月'},{name:'專屬客服',silver:'優先',gold:'1 對 1'}]
-const currentPrice=computed(()=>{const plan=plans.value.find(item=>item.id===selectedPlan.value)??plans.value[1]??fallbackPlans[1];return period.value==='month'?plan.monthly:plan.yearly})
-onMounted(async()=>{ loadSettings(); try { plans.value=await listMembershipPlans() } catch { plans.value=fallbackPlans } })
+const currentPrice=computed(()=>{const plan=plans.find(item=>item.id===selectedPlan.value)??plans[1];return period.value==='month'?plan.monthly:plan.yearly})
 const goBack=()=>closeCachedPage('/pages/trips/trips');const showPreview=()=>uni.showToast({title:'此為會員方案設計預覽',icon:'none'});const showUpgradeHistory=()=>uni.showToast({title:'暫無升級紀錄',icon:'none'})
 </script>
 <style scoped>
