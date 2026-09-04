@@ -18,7 +18,7 @@
     { "path": "pages/withdraw/withdraw", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/payment-settings/payment-settings", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/transactions/transactions", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
-    { "path": "pages/top-up/top-up", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
+    { "path": "pages/top-up/detail/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/voucher/claim", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/coupons/coupons", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },
     { "path": "pages/common-data/common-data", "style": { "navigationStyle": "custom", "navigationBarTitleText": "", "animationType": "none", "animationDuration": 0 } },

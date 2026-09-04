@@ -77,6 +77,7 @@
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
   <TopUpPage v-if="visitedPages.has('/pages/top-up/top-up')" v-show="activePagePath === '/pages/top-up/top-up'" />
+  <TopUpDetailPage v-if="visitedPages.has('/pages/top-up/detail/detail')" v-show="activePagePath === '/pages/top-up/detail/detail'" />
   <VoucherClaimPage v-if="visitedPages.has('/pages/voucher/claim')" v-show="activePagePath === '/pages/voucher/claim'" />
   <WithdrawPage v-if="visitedPages.has('/pages/withdraw/withdraw')" v-show="activePagePath === '/pages/withdraw/withdraw'" />
   <PaymentSettingsPage v-if="visitedPages.has('/pages/payment-settings/payment-settings')" v-show="activePagePath === '/pages/payment-settings/payment-settings'" />
@@ -121,6 +122,7 @@ import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'
 import TopUpPage from '../top-up/top-up.vue'
+import TopUpDetailPage from '../top-up/detail/detail.vue'
 import VoucherClaimPage from '../voucher/claim.vue'
 import WithdrawPage from '../withdraw/withdraw.vue'
 import PaymentSettingsPage from '../payment-settings/payment-settings.vue'

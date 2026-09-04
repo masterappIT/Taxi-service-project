@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 
-import { closeCachedPage, openCachedPage } from '../../utils/navigation'
+import { goHome, openCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
 import { reactive } from 'vue'
@@ -82,7 +82,7 @@ const openAmountDialog = (type: ActionType) => {
 const openTopUp = () => openCachedPage('/pages/top-up/top-up')
 const showRecords = () => openCachedPage('/pages/transactions/transactions')
 const openSettings = () => openCachedPage('/pages/payment-settings/payment-settings')
-const goBack = () => closeCachedPage('/pages/trips/trips')
+const goBack = () => goHome()
 </script>
 
 <style scoped>

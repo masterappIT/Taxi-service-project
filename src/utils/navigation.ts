@@ -52,6 +52,18 @@ export const openCachedPage = (url: string) => {
   return uni.navigateTo({ url, animationType: 'none', animationDuration: 0 })
 }
 
+export const goHome = () => {
+  // #ifdef MP-WEIXIN
+  if (embeddedHostActive) {
+    cachedPageStack.value = [HOME_PATH]
+    cachedPageUrl.value = HOME_PATH
+    return
+  }
+  // #endif
+
+  return uni.reLaunch({ url: HOME_PATH, animationType: 'none', animationDuration: 0 })
+}
+
 export const closeCachedPage = (fallbackUrl: string) => {
   // #ifdef MP-WEIXIN
   if (embeddedHostActive && cachedPageStack.value.length > 1) {
