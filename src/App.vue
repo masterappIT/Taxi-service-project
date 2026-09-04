@@ -1,6 +1,7 @@
 <template>
   <view class="app-shell" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
     <slot />
+    <view class="currency-switch" @tap.stop><text class="currency-label">{{ label }}</text><view class="currency-options"><view class="currency-option" :class="{ active: currency === 'HKD' }" @tap.stop="switchCurrency('HKD')">HKD</view><view class="currency-option" :class="{ active: currency === 'RMB' }" @tap.stop="switchCurrency('RMB')">RMB</view></view></view>
     <view v-if="showSplash" class="splash-screen" :class="{ 'splash-leaving': splashLeaving }" aria-label="Taxi Cross Border 啟動畫面">
       <image class="splash-circle splash-circle-left" src="/static/splash/ellipse-left.svg" mode="aspectFit" />
       <image class="splash-circle splash-circle-right" src="/static/splash/ellipse-right.svg" mode="aspectFit" />
@@ -14,9 +15,13 @@
 <script>
 import { swipeBack } from './utils/navigation'
 
+import { useCurrency } from './composables/useCurrency'
+
 export default {
   data() {
-    return { showSplash: true, splashLeaving: false, swipeStartX: 0, swipeStartY: 0 }
+    const { currency, label, loadSettings, setCurrency } = useCurrency()
+    loadSettings()
+    return { showSplash: true, splashLeaving: false, swipeStartX: 0, swipeStartY: 0, currency, label, switchCurrency: setCurrency }
   },
   methods: {
     handleTouchStart(event) {
@@ -78,8 +83,13 @@ body,
   overflow: hidden;
 }
 
- .app-shell {
-  position: fixed;
+.currency-switch { position: fixed; z-index: 10000; top: 18px; right: 18px; display: flex; align-items: center; gap: 8px; padding: 5px 7px 5px 10px; border-radius: 18px; background: rgba(37,41,47,.82); color: #fff; font-size: 11px; }
+.currency-options { display: flex; gap: 2px; padding: 2px; border-radius: 14px; background: rgba(255,255,255,.16); }
+.currency-option { display: block; padding: 3px 6px; border-radius: 10px; color: #d9d9d9; }
+.currency-option.active { background: #1effaa; color: #25292f; font-weight: 700; }
+
+.app-shell {
+ position: fixed;
   inset: 0;
  width: 100%;
   max-width: none;

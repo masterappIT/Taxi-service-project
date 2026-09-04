@@ -7,7 +7,7 @@ export async function getHealth(): Promise<{ status: string }> {
   return response.data as { status: string }
 }
 
-export type AppSettings = { language: string; region: string; currency: string }
+export type AppSettings = { language: string; region: string; currency: string; exchangeRate?: number }
 
 export async function getSettings(): Promise<AppSettings> {
   const response = await uni.request({ url: `${API_BASE_URL}/settings` })

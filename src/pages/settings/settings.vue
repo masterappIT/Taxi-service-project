@@ -17,12 +17,14 @@ import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { onMounted, ref } from 'vue'
 import { getSettings, updateSettings } from '../../services/api'
 import { closeCachedPage } from '../../utils/navigation'
+import { useCurrency, type Currency } from '../../composables/useCurrency'
 
 const { responsiveStyle } = useResponsiveCanvas()
+const { setCurrency } = useCurrency()
 const languages = ['繁體中文', '簡體中文', '英文']
 const regions = ['香港', '澳門', '中國內地']
 const currencies = ['港幣 HK$', '人民幣 ¥']
-const currencyCodes = ['HKD', 'CNY']
+const currencyCodes: Currency[] = ['HKD', 'RMB']
 const language = ref(languages[0])
 const region = ref(regions[0])
 const currency = ref(currencies[0])
@@ -32,7 +34,7 @@ const currencyIndex = ref(0)
 const persistSettings = () => updateSettings({ language: language.value, region: region.value, currency: currencyCodes[currencyIndex.value] }).catch(() => undefined)
 const changeLanguage = (event: { detail: { value: number } }) => { languageIndex.value = Number(event.detail.value); language.value = languages[languageIndex.value]; persistSettings() }
 const changeRegion = (event: { detail: { value: number } }) => { regionIndex.value = Number(event.detail.value); region.value = regions[regionIndex.value]; persistSettings() }
-const changeCurrency = (event: { detail: { value: number } }) => { currencyIndex.value = Number(event.detail.value); currency.value = currencies[currencyIndex.value]; persistSettings() }
+const changeCurrency = (event: { detail: { value: number } }) => { currencyIndex.value = Number(event.detail.value); currency.value = currencies[currencyIndex.value]; setCurrency(currencyCodes[currencyIndex.value]); persistSettings() }
 onMounted(async () => {
   try {
     const saved = await getSettings()
@@ -41,7 +43,7 @@ onMounted(async () => {
     const savedCurrencyIndex = currencyCodes.indexOf(saved.currency)
     if (savedLanguageIndex >= 0) { languageIndex.value = savedLanguageIndex; language.value = languages[savedLanguageIndex] }
     if (savedRegionIndex >= 0) { regionIndex.value = savedRegionIndex; region.value = regions[savedRegionIndex] }
-    if (savedCurrencyIndex >= 0) { currencyIndex.value = savedCurrencyIndex; currency.value = currencies[savedCurrencyIndex] }
+    if (savedCurrencyIndex >= 0) { currencyIndex.value = savedCurrencyIndex; currency.value = currencies[savedCurrencyIndex]; setCurrency(currencyCodes[savedCurrencyIndex]) }
   } catch { /* retain defaults when the API is unavailable */ }
 })
 const logout = () => uni.showToast({ title: '已登出', icon: 'none' })

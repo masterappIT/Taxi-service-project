@@ -167,12 +167,13 @@ class RecommendedAddressesController {
 }
 @Controller('settings')
 class SettingsController {
-  private settings = { language: '繁體中文', region: '香港', currency: 'HKD' }
+  private settings = { language: '繁體中文', region: '香港', currency: 'HKD', exchangeRate: 0.92 }
   @Get() get() { return this.settings }
-  @Post() update(@Body() body: { language?: string; region?: string; currency?: string }) {
+  @Post() update(@Body() body: { language?: string; region?: string; currency?: string; exchangeRate?: number }) {
     if (body.language) this.settings.language = body.language
     if (body.region) this.settings.region = body.region
-    if (body.currency) this.settings.currency = body.currency
+    if (body.currency && ['HKD', 'RMB'].includes(body.currency)) this.settings.currency = body.currency
+    if (body.exchangeRate !== undefined && Number.isFinite(Number(body.exchangeRate)) && Number(body.exchangeRate) > 0) this.settings.exchangeRate = Number(body.exchangeRate)
     return this.settings
   }
 }

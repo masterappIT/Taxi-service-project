@@ -6,13 +6,15 @@
       <image class="vehicle-image" :class="`vehicle-${vehicle.id}`" :src="vehicle.image" mode="scaleToFill" />
     </view>
     <view class="spec seat"><image src="/static/vehicles/seat.svg" mode="aspectFit"/><text>{{ vehicle.seats }}座</text></view><view class="spec color">不限颜色</view><view v-if="vehicle.modelChoice" class="spec model-choice">不限車款</view>
-    <view class="price">RMB¥{{ vehicle.price }}</view><text class="discount">已減 ¥200</text>
+    <view class="price">{{ format(vehicle.price) }}</view><text class="discount">已減 {{ format(200) }}</text>
   </view>
 </template>
 <script setup lang="ts">
 import type { Vehicle } from '../../types/vehicle'
+import { useCurrency } from '../../composables/useCurrency'
 
 defineProps<{ vehicle: Vehicle; selectable?: boolean; selected?: boolean }>()
+const { format } = useCurrency()
 const emit = defineEmits<{ select: [] }>()
 </script>
 <style scoped>

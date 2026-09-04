@@ -8,6 +8,7 @@
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 button { cursor: pointer; }
+.rate-control{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b}.rate-control input{width:75px;padding:6px;border:1px solid #dbe3ef;border-radius:6px}.rate-control button{padding:6px 8px;border:0;border-radius:6px;background:#285cfc;color:#fff;font-size:11px}
 .shell {
   min-height: 100vh;
   display: flex;
