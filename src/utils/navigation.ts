@@ -44,7 +44,9 @@ export const openCachedPage = (url: string) => {
   if (targetIndex >= 0) {
     const delta = pages.length - 1 - targetIndex
     if (delta > 0) return uni.navigateBack({ delta, animationType: 'none', animationDuration: 0 })
-    return
+    // The same detail route can represent different independent states.
+    // Replace it so a completed page cannot retain the pending query (or vice versa).
+    return uni.redirectTo({ url, animationType: 'none', animationDuration: 0 })
   }
 
   return uni.navigateTo({ url, animationType: 'none', animationDuration: 0 })

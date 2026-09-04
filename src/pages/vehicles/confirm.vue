@@ -109,7 +109,7 @@ const discount = 100
 const total = computed(() => vehicle.value.price + priorityPrice - discount)
 const cityName = (value: string | undefined, fallback: string) => { const text = value?.trim() || ''; if (text.includes('香港')) return '香港'; if (text.includes('深圳') || text.includes('廣東')) return '深圳'; return text.split(/[·，,\s]/)[0] || fallback }
 const saveTripChanges = (origin: string, destination: string, departureTime: string) => { tripStore.setRoute(origin, destination); tripStore.setDepartureTime(departureTime); editSheetOpen.value = false }
-const goBack = () => closeCachedPage('/pages/vehicles/selected')
+const goBack = () => openCachedPage('/pages/index/index')
 const openCoupons = () => openCachedPage('/pages/coupons/coupons')
 const payNow = () => { paymentOpen.value = true }
 const closePayment = () => { paymentOpen.value = false }

@@ -46,7 +46,9 @@ const orders: Order[] = [
 const visibleOrders = computed(() => activeTab.value === 'completed' ? orders.filter((order) => order.status === '已完成') : activeTab.value === 'cancelled' ? orders.filter((order) => order.status === '取消') : orders)
 const statusIcon = (status: OrderStatus) => status === '進行中' ? '/static/orders/status-green.svg' : status === '已完成' || status === '待確認' ? '/static/orders/status-blue.svg' : '/static/orders/status-gray.svg'
 const openOrder = (order: Order) => {
-  if (order.status === '待確認') openCachedPage('/pages/orders/detail')
+  if (order.status === '已完成' || order.status === '待確認') {
+    openCachedPage(`/pages/orders/detail?status=${order.status === '已完成' ? 'completed' : 'pending'}`)
+  }
 }
 const goBack = () => openCachedPage('/pages/trips/trips')
 </script>

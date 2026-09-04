@@ -41,6 +41,13 @@ export async function listRecommendedAddresses(): Promise<RecommendedAddress[]> 
   return (response.data as { data: RecommendedAddress[] }).data
 }
 
+export type MembershipPlan = { id: string; level: string; name: string; monthly: number; yearly: number; recommended: boolean; benefits: string[]; enabled: boolean; order: number }
+
+export async function listMembershipPlans(): Promise<MembershipPlan[]> {
+  const response = await uni.request({ url: `${API_BASE_URL}/membership-plans` })
+  if (response.statusCode >= 400) throw new Error('會員方案暫時無法載入')
+  return (response.data as { data: MembershipPlan[] }).data
+}
 export type SupportMessage = {
   id: string
   direction: 'inbound' | 'outbound' | string
