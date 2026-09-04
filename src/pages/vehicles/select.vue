@@ -36,14 +36,15 @@ import VehicleCard from '../../components/vehicles/VehicleCard.vue'
 import type { Vehicle } from '../../types/vehicle'
 type Category='all'|'standard-mpv'|'premium-mpv'|'standard-car'|'premium-car'
 interface VehicleGroup{category:Exclude<Category,'all'>;title:string;vehicles:Vehicle[]}
-const {responsiveStyle}=useResponsiveCanvas();const tripStore=useTripStore();const activeCategory=ref<Category>('all');const selectedVehicle=ref('premium-alphard');const editSheetOpen=ref(false)
+const {responsiveStyle}=useResponsiveCanvas();const tripStore=useTripStore();const activeCategory=ref<Category>('all');const editSheetOpen=ref(false)
 const tabs:Array<{label:string;value:Category}>=[{label:'全部',value:'all'},{label:'普通MPV',value:'standard-mpv'},{label:'高級MPV',value:'premium-mpv'},{label:'普通轎車',value:'standard-car'},{label:'頂級轎車',value:'premium-car'}]
 const groups:VehicleGroup[]=[
-{category:'standard-mpv',title:'普通跨境商務車',vehicles:[{id:'standard-mpv',seats:6,price:700,image:'',doubleImage:true,modelChoice:true,selectable:true}]},
+{category:'standard-mpv',title:'普通跨境商務車',vehicles:[{id:'standard-mpv',seats:6,price:700,image:'/static/vehicles/alphard.png',modelChoice:true,selectable:true}]},
 {category:'premium-mpv',title:'高級跨境商務車',vehicles:[{id:'premium-vellfire',brand:'Toyota',model:'Vellfire',series:'20系',seats:7,price:800,image:'/static/vehicles/vellfire.png',selectable:true},{id:'premium-alphard',brand:'Toyota',model:'Alphard',series:'30系',seats:6,price:800,image:'/static/vehicles/alphard.png',selectable:true}]},
 {category:'standard-car',title:'普通跨境轎車',vehicles:[{id:'tesla-s',brand:'Tesla',model:'Model',series:'S',seats:5,price:800,image:'/static/vehicles/tesla-s.png',selectable:true,imageClass:'tesla-s'},{id:'tesla-x',brand:'Tesla',model:'Model',series:'X',seats:7,price:800,image:'/static/vehicles/tesla-x.png',selectable:true},{id:'tesla-y',brand:'Tesla',model:'Model',series:'Y',seats:5,price:800,image:'/static/vehicles/tesla-y.png',selectable:true},{id:'tesla-3',brand:'Tesla',model:'Model',series:'3',seats:5,price:800,image:'/static/vehicles/tesla-3.png',selectable:true}]},
 {category:'premium-car',title:'頂級跨境轎車',vehicles:[]}]
 const visibleGroups=computed(()=>activeCategory.value==='all'?groups.filter(group=>group.vehicles.length):groups.filter(group=>group.category===activeCategory.value))
+const selectedVehicle=computed(()=>tripStore.chosenVehicle?.id || '')
 const cityName=(value:string|undefined,fallback:string)=>{
   const text=value?.trim() || ''
   if (text.includes('香港')) return '香港'
@@ -56,7 +57,7 @@ const cityName=(value:string|undefined,fallback:string)=>{
 const originLabel=computed(()=>cityName(tripStore.activeTrip?.origin,'香港'))
 const destinationLabel=computed(()=>cityName(tripStore.activeTrip?.destination,'深圳'))
 const bookingTime=computed(()=>tripStore.departureTime||'March 15 2024 14:00')
-const selectVehicle=(vehicle:Vehicle)=>{if(!vehicle.selectable)return;selectedVehicle.value=vehicle.id;tripStore.setChosenVehicle(vehicle);openCachedPage('/pages/vehicles/selected')}
+const selectVehicle=(vehicle:Vehicle)=>{if(!vehicle.selectable)return;tripStore.setChosenVehicle(vehicle);openCachedPage('/pages/vehicles/selected')}
 const saveTripChanges=(origin:string,destination:string,departureTime:string)=>{tripStore.setRoute(origin,destination);tripStore.setDepartureTime(departureTime);editSheetOpen.value=false}
 const goBack=()=>closeCachedPage('/pages/index/index')
 </script>
