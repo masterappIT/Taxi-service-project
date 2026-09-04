@@ -18,17 +18,19 @@
   </view>
 </template>
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { listRecommendedAddresses } from '../../services/api'
 const props = defineProps<{ selecting: 'origin' | 'destination'; locationLabel: string; detailedAddress: string }>()
-const emit = defineEmits<{ close: []; select: [value: string]; locate: []; 'use-current': [] }>()
 type Region = '大陸' | '香港' | '澳門'
 interface Place { name: string; address: string }
+interface AddressSelection extends Place { region: Region | null }
+const emit = defineEmits<{ close: []; select: [value: string, selection: AddressSelection]; locate: []; 'use-current': [] }>()
 interface RegionData { currentCity: string; currentName: string; currentAddress: string; places: Place[] }
 const regions: Region[] = ['大陸', '香港', '澳門']
 const selectedRegion = ref<Region | null>(null)
 const regionMenuOpen = ref(false)
 const keyword = ref('')
-const hongKongPlaces: Place[] = [
+const hongKongPlaces = ref<Place[]>([
   { name: '香港國際機場', address: '香港特別行政區-離島區-香港赤臘角天路1號' },
   { name: '香港迪士尼樂園', address: '香港特別行政區-荃灣區-大嶼山竹篙灣' },
   { name: '香港海洋公園', address: '香港特別行政區-南區-香港香港仔黃竹坑180號' },
@@ -37,8 +39,8 @@ const hongKongPlaces: Place[] = [
   { name: '香港會展中心', address: '香港特別行政區-灣仔區-香港銅鑼灣勿地臣街1號' },
   { name: '亞洲國際博覽館', address: '香港特別行政區-灣仔區-香港銅鑼灣勿地臣街1號' },
   { name: '蘭桂坊', address: '香港特別行政區-灣仔區-香港銅鑼灣勿地臣街1號' },
-]
-const mainlandPlaces: Place[] = [
+])
+const mainlandPlaces = ref<Place[]>([
   { name: '深圳寶安國際機場', address: '深圳市-寶安區-寶安大道' },
   { name: '深圳灣口岸', address: '深圳市-寶安區-寶安大道' },
   { name: '廣州白雲國際機場', address: '廣州市-花都區-花東鎮機場大道東888號' },
@@ -48,33 +50,51 @@ const mainlandPlaces: Place[] = [
   { name: '中山市', address: '廣東省-中山市' },
   { name: '佛山市', address: '廣東省-佛山市' },
   { name: '東莞市', address: '廣東省-東莞市' },
-]
-const macauPlaces: Place[] = [
-  { name: '澳門國際機場', address: '澳門特別行政區-氹仔島-澳門特別行政區' },
-  { name: '澳門半島', address: '澳門特別行政區-澳門半島-澳門' },
-  { name: '澳門大三巴牌坊', address: '澳門特別行政區-澳門半島-澳門特別行政區花王堂區炮台山下' },
-  { name: '澳門葡京酒店', address: '澳門特別行政區-澳門半島-澳門' },
-  { name: '銀河酒店鑽石大廳', address: '澳門特別行政區-澳門半島-澳門' },
-  { name: '永利皇宮', address: '澳門特別行政區-澳門半島-澳門' },
-]
+])
+const macauPlaces = ref<Place[]>([
+  { name: '澳門國際機場', address: '澳門特別行政區-嘉模堂區-偉龍馬路' },
+  { name: '澳門半島', address: '澳門特別行政區-澳門半島' },
+  { name: '澳門大三巴牌坊', address: '澳門特別行政區-花王堂區-炮台山下' },
+  { name: '澳門葡京酒店', address: '澳門特別行政區-大堂區-葡京路2-4號' },
+  { name: '銀河酒店鑽石大廳', address: '澳門特別行政區-路氹城-望德聖母灣大馬路' },
+  { name: '永利皇宮', address: '澳門特別行政區-路氹城-體育館大馬路' },
+])
 const currentCity = computed(() => props.locationLabel.split(' · ')[0] || '目前位置')
 const defaultData = computed<RegionData>(() => ({
   currentCity: currentCity.value,
   currentName: props.locationLabel || '目前位置',
   currentAddress: props.detailedAddress || props.locationLabel || '目前位置',
-  places: props.selecting === 'origin' ? hongKongPlaces : mainlandPlaces,
+  places: props.selecting === 'origin' ? hongKongPlaces.value : mainlandPlaces.value,
 }))
 const regionData = computed<RegionData>(() => ({
   ...defaultData.value,
   places: selectedRegion.value === '大陸'
-    ? mainlandPlaces
+    ? mainlandPlaces.value
     : selectedRegion.value === '澳門'
-      ? macauPlaces
-      : hongKongPlaces,
+      ? macauPlaces.value
+      : hongKongPlaces.value,
 }))
 const filteredPlaces = computed(() => regionData.value.places.filter(place => !keyword.value || `${place.name}${place.address}`.includes(keyword.value)))
+onMounted(async () => {
+  try {
+    const addresses = await listRecommendedAddresses()
+    const grouped = (region: Region) => addresses.filter(item => item.region === region).map(({ name, address }) => ({ name, address }))
+    const hongKong = grouped('香港')
+    const mainland = grouped('大陸')
+    const macau = grouped('澳門')
+    if (hongKong.length) hongKongPlaces.value = hongKong
+    if (mainland.length) mainlandPlaces.value = mainland
+    if (macau.length) macauPlaces.value = macau
+  } catch {
+    // Keep bundled recommendations when the API is unavailable.
+  }
+})
 const selectPlace = (place: Place) => {
-  emit('select', selectedRegion.value ? `${selectedRegion.value} · ${place.name}` : place.name)
+  emit(
+    'select',
+    selectedRegion.value ? `${selectedRegion.value} · ${place.name}` : place.name,
+    { ...place, region: selectedRegion.value },
+  )
 }
 const handleRegionTriggerTap = () => {
   if (selectedRegion.value) {

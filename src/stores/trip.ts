@@ -1,17 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { VehicleCardData } from '../components/vehicles/VehicleCard.vue'
-
-const VEHICLE_STORAGE_KEY = 'taxi-selected-vehicle'
-const readStoredVehicle = (): VehicleCardData | null => {
-  const stored = uni.getStorageSync(VEHICLE_STORAGE_KEY)
-  return stored && typeof stored === 'object' && typeof stored.id === 'string' ? stored as VehicleCardData : null
-}
+import type { Vehicle } from '../types/vehicle'
 
 export const useTripStore = defineStore('trip', () => {
   const activeTrip = ref<{ origin: string; destination: string } | null>(null)
   const departureTime = ref('')
-  const selectedVehicle = ref<VehicleCardData | null>(readStoredVehicle())
+  const chosenVehicle = ref<Vehicle | null>(null)
+
+  function setChosenVehicle(vehicle: Vehicle) {
+    chosenVehicle.value = vehicle
+  }
 
   function setRoute(origin: string, destination: string) {
     activeTrip.value = { origin, destination }
@@ -21,10 +19,5 @@ export const useTripStore = defineStore('trip', () => {
     departureTime.value = value
   }
 
-  function setSelectedVehicle(value: VehicleCardData) {
-    selectedVehicle.value = value
-    uni.setStorageSync(VEHICLE_STORAGE_KEY, value)
-  }
-
-  return { activeTrip, departureTime, selectedVehicle, setRoute, setDepartureTime, setSelectedVehicle }
+  return { activeTrip, departureTime, chosenVehicle, setRoute, setDepartureTime, setChosenVehicle }
 })

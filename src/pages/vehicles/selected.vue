@@ -38,11 +38,11 @@ import { useTripStore } from '../../stores/trip'
 import { closeCachedPage, openCachedPage } from '../../utils/navigation'
 import TripEditSheet from '../../components/home/TripEditSheet.vue'
 import VehicleCard from '../../components/vehicles/VehicleCard.vue'
-import type { VehicleCardData as Vehicle } from '../../components/vehicles/VehicleCard.vue'
+import type { Vehicle } from '../../types/vehicle'
 const { responsiveStyle } = useResponsiveCanvas()
 const tripStore = useTripStore()
 const editSheetOpen = ref(false)
-const vehicle = computed<Vehicle>(() => tripStore.selectedVehicle || { id: 'premium-alphard', brand: 'Toyota', model: 'Alphard', series: '30系', seats: 6, price: 800, image: '/static/vehicles/alphard.png', selectable: true })
+const vehicle = computed<Vehicle>(() => tripStore.chosenVehicle || { id: 'premium-alphard', brand: 'Toyota', model: 'Alphard', series: '30系', seats: 6, price: 800, image: '/static/vehicles/alphard.png', selectable: true })
 const originLabel = computed(() => cityName(tripStore.activeTrip?.origin, '香港'))
 const destinationLabel = computed(() => cityName(tripStore.activeTrip?.destination, '深圳'))
 const cityName = (value: string | undefined, fallback: string) => {

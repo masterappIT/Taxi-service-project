@@ -37,11 +37,11 @@ import { closeCachedPage, openCachedPage } from '../../utils/navigation'
 import TripEditSheet from '../../components/home/TripEditSheet.vue'
 import VehicleCard from '../../components/vehicles/VehicleCard.vue'
 import HomeMap from '../../components/home/HomeMap.vue'
-import type { VehicleCardData as Vehicle } from '../../components/vehicles/VehicleCard.vue'
+import type { Vehicle } from '../../types/vehicle'
 const { responsiveStyle } = useResponsiveCanvas()
 const tripStore = useTripStore()
 const editSheetOpen = ref(false)
-const vehicle = computed<Vehicle>(() => tripStore.selectedVehicle || { id: 'premium-vellfire', brand: 'Toyota', model: 'Vellfire', series: '20系', seats: 7, price: 800, image: '/static/vehicles/vellfire.png', selectable: true })
+const vehicle = computed<Vehicle>(() => tripStore.chosenVehicle || { id: 'premium-vellfire', brand: 'Toyota', model: 'Vellfire', series: '20系', seats: 7, price: 800, image: '/static/vehicles/vellfire.png', selectable: true })
 const originLabel = computed(() => cityName(tripStore.activeTrip?.origin, '香港'))
 const destinationLabel = computed(() => cityName(tripStore.activeTrip?.destination, '深圳'))
 const bookingTime = computed(() => tripStore.departureTime || 'March 15 2024 14:00')

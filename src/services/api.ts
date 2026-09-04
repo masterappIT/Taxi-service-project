@@ -26,6 +26,21 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
   return response.data as LocationDetails
 }
 
+export type RecommendedAddress = {
+  id: string
+  region: '大陸' | '香港' | '澳門'
+  name: string
+  address: string
+  enabled: boolean
+  order: number
+}
+
+export async function listRecommendedAddresses(): Promise<RecommendedAddress[]> {
+  const response = await uni.request({ url: `${API_BASE_URL}/recommended-addresses` })
+  if (response.statusCode >= 400) throw new Error('推薦地址暫時無法載入')
+  return (response.data as { data: RecommendedAddress[] }).data
+}
+
 export type SupportMessage = {
   id: string
   direction: 'inbound' | 'outbound' | string

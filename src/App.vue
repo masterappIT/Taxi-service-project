@@ -1,5 +1,5 @@
 <template>
-  <view class="app-shell">
+  <view class="app-shell" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
     <slot />
     <view v-if="showSplash" class="splash-screen" :class="{ 'splash-leaving': splashLeaving }" aria-label="Taxi Cross Border 啟動畫面">
       <image class="splash-circle splash-circle-left" src="/static/splash/ellipse-left.svg" mode="aspectFit" />
@@ -12,20 +12,49 @@
 </template>
 
 <script>
+import { swipeBack } from './utils/navigation'
+
 export default {
   data() {
-    return { showSplash: true, splashLeaving: false }
+    return { showSplash: true, splashLeaving: false, swipeStartX: 0, swipeStartY: 0 }
+  },
+  methods: {
+    handleTouchStart(event) {
+      const touch = event.touches?.[0]
+      if (touch) {
+        this.swipeStartX = touch.clientX
+        this.swipeStartY = touch.clientY
+      }
+    },
+    handleTouchEnd(event) {
+      const touch = event.changedTouches?.[0]
+      if (!touch || this.swipeStartX > 32 || touch.clientX - this.swipeStartX < 80 || Math.abs(touch.clientY - this.swipeStartY) > 60) return
+      this.swipeStartX = 999
+      swipeBack()
+    },
   },
   onLaunch() {
     console.log('App Launch')
   },
   mounted() {
+    // H5 routed pages may be mounted outside the App.vue shell.
+    // Keep the shell listeners for native targets and mirror them at document level on H5.
+    // #ifdef H5
+    document.addEventListener('touchstart', this.handleTouchStart, { passive: true })
+    document.addEventListener('touchend', this.handleTouchEnd, { passive: true })
+    // #endif
     setTimeout(() => {
       this.splashLeaving = true
       setTimeout(() => {
         this.showSplash = false
       }, 280)
     }, 1900)
+  },
+  beforeUnmount() {
+    // #ifdef H5
+    document.removeEventListener('touchstart', this.handleTouchStart)
+    document.removeEventListener('touchend', this.handleTouchEnd)
+    // #endif
   },
   onShow() {
     console.log('App Show')

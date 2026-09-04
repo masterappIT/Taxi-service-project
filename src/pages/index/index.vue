@@ -34,12 +34,26 @@
     <template v-else>
       <HomeTravelModeSwitch v-model:mode="rideMode" layout="business" />
       <BusinessCharterPanel
-        @origin="chooseOrigin"
-        @destination="chooseDestination"
+        :origin-region="businessOrigin.region"
+        :origin-place="businessOrigin.place"
+        :destination-region="businessDestination.region"
+        :destination-place="businessDestination.place"
+        @origin="chooseBusinessOrigin"
+        @destination="chooseBusinessDestination"
         @date-time="chooseDepartureTime"
         @duration="showComingSoon('用車時間選擇')"
         @book="showComingSoon('商務包車預約')"
         @promo="showComingSoon('優惠預約')"
+      />
+      <AddressPicker
+        v-if="addressPicker"
+        :selecting="addressPicker"
+        :location-label="locationLabel"
+        :detailed-address="detailedAddress"
+        @close="addressPicker = null"
+        @select="selectAddress"
+        @locate="locateCurrentAddress"
+        @use-current="useCurrentLocation(true)"
       />
       <BookingTimePicker v-if="bookingTimePicker" @close="bookingTimePicker = false" @confirm="confirmDepartureTime" />
     </template>
@@ -62,6 +76,11 @@
   <AccountPage v-if="visitedPages.has('/pages/account/account')" v-show="activePagePath === '/pages/account/account'" />
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
+  <TopUpPage v-if="visitedPages.has('/pages/top-up/top-up')" v-show="activePagePath === '/pages/top-up/top-up'" />
+  <VoucherClaimPage v-if="visitedPages.has('/pages/voucher/claim')" v-show="activePagePath === '/pages/voucher/claim'" />
+  <WithdrawPage v-if="visitedPages.has('/pages/withdraw/withdraw')" v-show="activePagePath === '/pages/withdraw/withdraw'" />
+  <PaymentSettingsPage v-if="visitedPages.has('/pages/payment-settings/payment-settings')" v-show="activePagePath === '/pages/payment-settings/payment-settings'" />
+  <TransactionsPage v-if="visitedPages.has('/pages/transactions/transactions')" v-show="activePagePath === '/pages/transactions/transactions'" />
   <CommonDataPage v-if="visitedPages.has('/pages/common-data/common-data')" v-show="activePagePath === '/pages/common-data/common-data'" />
   <CouponsPage v-if="visitedPages.has('/pages/coupons/coupons')" v-show="activePagePath === '/pages/coupons/coupons'" />
   <ComplaintsPage v-if="visitedPages.has('/pages/complaints/complaints')" v-show="activePagePath === '/pages/complaints/complaints'" />
@@ -101,6 +120,11 @@ import VehicleConfirmPage from '../vehicles/confirm.vue'
 import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'
+import TopUpPage from '../top-up/top-up.vue'
+import VoucherClaimPage from '../voucher/claim.vue'
+import WithdrawPage from '../withdraw/withdraw.vue'
+import PaymentSettingsPage from '../payment-settings/payment-settings.vue'
+import TransactionsPage from '../transactions/transactions.vue'
 import CommonDataPage from '../common-data/common-data.vue'
 import CouponsPage from '../coupons/coupons.vue'
 import ComplaintsPage from '../complaints/complaints.vue'
@@ -120,6 +144,10 @@ const rideMode = ref<RideMode>('cross-border')
 const travelMode = ref<TravelMode>('cross-border')
 const origin = ref('香港 · 九龍站')
 const destination = ref('廣東 · 深圳灣口岸')
+interface BusinessLocation { region: string; place: string }
+interface AddressSelection { region: '大陸' | '香港' | '澳門' | null; name: string; address: string }
+const businessOrigin = ref<BusinessLocation>({ region: '香港', place: '香港國際機場' })
+const businessDestination = ref<BusinessLocation>({ region: '大陸', place: '' })
 const departureTime = ref('')
 const flightNumber = ref('')
 const mapLatitude = ref(22.3046)
@@ -136,13 +164,58 @@ onShow(() => {
 })
 
 const addressPicker = ref<'origin' | 'destination' | null>(null)
-const chooseOrigin = () => { addressPicker.value = 'origin' }
-const chooseDestination = () => { addressPicker.value = 'destination' }
-const selectAddress = (value: string) => { if (addressPicker.value === 'origin') origin.value = value; if (addressPicker.value === 'destination') destination.value = value; addressPicker.value = null }
+const addressPickerContext = ref<'cross-border' | 'business'>('cross-border')
+const chooseOrigin = () => { addressPickerContext.value = 'cross-border'; addressPicker.value = 'origin' }
+const chooseDestination = () => { addressPickerContext.value = 'cross-border'; addressPicker.value = 'destination' }
+const chooseBusinessOrigin = () => { addressPickerContext.value = 'business'; addressPicker.value = 'origin' }
+const chooseBusinessDestination = () => { addressPickerContext.value = 'business'; addressPicker.value = 'destination' }
+const parseBusinessLocation = (value: string): BusinessLocation => {
+  const [region, ...placeParts] = value.split(' · ')
+  return { region: placeParts.length ? region : '', place: placeParts.length ? placeParts.join(' · ') : region }
+}
+const formatBusinessLocation = (selection: AddressSelection): BusinessLocation => {
+  const parts = selection.address.split('-').map(part => part.trim()).filter(Boolean)
+  const cityIndex = parts.findIndex(part => part.endsWith('市') || part.endsWith('特別行政區'))
+  const rawCity = cityIndex >= 0 ? parts[cityIndex] : selection.region || ''
+  const region = rawCity === '香港特別行政區'
+    ? '香港'
+    : rawCity === '澳門特別行政區'
+      ? '澳門'
+      : rawCity
+  const details = cityIndex >= 0 ? parts.slice(cityIndex + 1) : parts.slice(1)
+  return { region, place: details.join(' · ') || selection.name }
+}
+const selectAddress = (value: string, selection?: AddressSelection) => {
+  if (addressPickerContext.value === 'business') {
+    const location = selection ? formatBusinessLocation(selection) : parseBusinessLocation(value)
+    if (addressPicker.value === 'origin') businessOrigin.value = location
+    if (addressPicker.value === 'destination') businessDestination.value = location
+  } else {
+    if (addressPicker.value === 'origin') origin.value = value
+    if (addressPicker.value === 'destination') destination.value = value
+  }
+  addressPicker.value = null
+}
 const locateCurrentAddress = () => useCurrentLocation(false)
+const formatCurrentBusinessLocation = (): BusinessLocation => {
+  const [city, ...districtParts] = locationLabel.value.replace(/澳门/g, '澳門').split(' · ')
+  const district = districtParts.join(' · ')
+  const address = detailedAddress.value.replace(/澳门/g, '澳門').replace(/^澳門(?:特別行政區)?[-·\s]*/, '')
+  const placeParts = [district, address].filter((part, index, values) => part && values.indexOf(part) === index)
+  return { region: city || '目前位置', place: placeParts.join(' · ') || '目前位置' }
+}
 const selectCurrentLocation = () => {
-  if (addressPicker.value === 'origin') origin.value = detailedAddress.value
-  if (addressPicker.value === 'destination') destination.value = detailedAddress.value
+  if (addressPickerContext.value === 'business') {
+    const location = formatCurrentBusinessLocation()
+    if (addressPicker.value === 'origin') businessOrigin.value = location
+    if (addressPicker.value === 'destination') businessDestination.value = location
+  } else {
+    const currentAddress = locationLabel.value.startsWith('澳門')
+      ? `${locationLabel.value} · ${detailedAddress.value.replace(/澳门/g, '澳門')}`
+      : detailedAddress.value
+    if (addressPicker.value === 'origin') origin.value = currentAddress
+    if (addressPicker.value === 'destination') destination.value = currentAddress
+  }
   addressPicker.value = null
 }
 const chooseDepartureTime = () => { bookingTimePicker.value = true }
@@ -170,7 +243,11 @@ const useCurrentLocation = (closePicker = false) => {
       reverseGeocode(latitude, longitude)
         .then((location) => {
           if (location.address) detailedAddress.value = location.address
-          if (location.city) locationLabel.value = location.district ? `${location.city} · ${location.district}` : location.city
+          if (localRegion?.region === '澳門') {
+            locationLabel.value = `澳門 · ${location.district || localRegion.district}`
+          } else if (location.city) {
+            locationLabel.value = location.district ? `${location.city} · ${location.district}` : location.city
+          }
         })
         .catch(() => undefined)
         .finally(() => {
