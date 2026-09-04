@@ -39,7 +39,7 @@ const activeTab = ref<'all' | 'important'>('all')
 const messages = [
   { type: 'order', title: '您的跨境出行訂單已確認', description: '您的行程：香港 - 深圳機場（訂單編號：282678634）', icon: '/static/messages/order.svg' },
   { type: 'top-up', title: '您的餘額增值已到帳', description: '您的錢包餘額$0.00', icon: '/static/messages/top-up.svg' },
-  { type: 'withdrawal', title: '您的餘額兌現已到帳', description: '您的錢包餘額$0.00', icon: '/static/messages/wallet.svg' },
+  { type: 'withdrawal', title: '您的餘額提現已到帳', description: '您的錢包餘額$0.00', icon: '/static/messages/wallet.svg' },
   { type: 'refund', title: '您的訂單退款已到帳', description: '行程：香港 - 深圳機場（訂單編號：282678634）', icon: '/static/messages/wallet.svg' }
 ] as const
 const readTypes = ref<string[]>([])

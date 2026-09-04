@@ -67,12 +67,12 @@ const details = {
     notice: '增值金額已存入您的錢包，可於下次行程付款時使用。'
   },
   withdrawal: {
-    title: '您的餘額兌現已到帳',
-    status: '兌現成功',
+    title: '您的餘額提現已到帳',
+    status: '提現成功',
     icon: '/static/messages/wallet.svg',
     rows: [
       { label: '交易編號', value: 'OUT282678634' },
-      { label: '兌現金額', value: 'HK$500.00' },
+      { label: '提現金額', value: 'HK$500.00' },
       { label: '收款方式', value: '銀行帳戶' },
       { label: '到帳時間', value: '2024年1月1日 10:30' },
       { label: '錢包餘額', value: 'HK$0.00' }

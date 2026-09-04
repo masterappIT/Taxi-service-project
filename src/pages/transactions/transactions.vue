@@ -14,7 +14,7 @@
       <image class="row-divider divider-three" src="/static/transactions/row-divider.svg" mode="aspectFit" />
       <view class="record-row row-0" @tap="openTopUpDetail"><text class="record-kind">收入</text><view class="record-detail"><text>餘額增值</text><text class="record-time">01/01 12:00:00</text></view><text class="record-amount positive">+HKD$1000</text></view>
       <view class="record-row row-1"><text class="record-kind">退款</text><view class="record-detail"><text>跨境出行 取消訂單</text><text class="record-time">01/01 12:00:00</text></view><text class="record-amount negative">-HKD$1000</text></view>
-      <view class="record-row row-2"><text class="record-kind">提現</text><view class="record-detail"><text>餘額兌現</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount positive"><text>+HKD$1000</text></view><text class="record-status">已到帳</text></view>
+      <view class="record-row row-2"><text class="record-kind">提現</text><view class="record-detail"><text>餘額提現</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount positive"><text>+HKD$1000</text></view><text class="record-status">已到帳</text></view>
       <view class="record-row row-3"><text class="record-kind">支出</text><view class="record-detail"><text>跨境出行 餘額支付</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount negative"><text>-HKD$1000</text></view><text class="record-order">訂單編號：282678634</text></view>
     </view>
     <view class="month previous-month"><text class="month-number">3</text><text>/2024</text><image src="/static/transactions/section-mark.svg" mode="aspectFit" /></view>
@@ -25,7 +25,7 @@
         <view class="filter-actions"><view class="filter-action cancel" @tap="closeFilter"><text>取消</text></view><view class="filter-action confirm" @tap="applyFilter"><text>確定</text></view></view>
         <view class="filter-group income-group"><text class="filter-label">收支類型</text><view class="filter-option selected"><text>全部</text></view><view class="filter-option"><text>收入</text></view><view class="filter-option"><text>支出</text></view></view>
         <text class="filter-label transaction-label">交易類型</text>
-        <view class="transaction-options"><view class="filter-option selected"><text>全部</text></view><view class="filter-option"><text>出行訂單</text></view><view class="filter-option"><text>餘額兌現</text></view></view>
+        <view class="transaction-options"><view class="filter-option selected"><text>全部</text></view><view class="filter-option"><text>出行訂單</text></view><view class="filter-option"><text>餘額提現</text></view></view>
         <view class="filter-option balance-option"><text>餘額帳單</text></view>
         <view class="filter-option topup-option"><text>餘額增值</text></view><view class="filter-option cancel-order-option"><text>取消訂單</text></view>
       </view>

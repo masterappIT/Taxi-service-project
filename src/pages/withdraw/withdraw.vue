@@ -2,7 +2,7 @@
   <view class="page" :style="responsiveStyle">
     <view class="header">
       <image class="back" src="/static/withdraw/back.svg" mode="aspectFit" @tap="goBack" />
-      <text class="title">兌現</text>
+      <text class="title">提現</text>
     </view>
     <text class="method-title">到帳方式</text>
     <view class="methods">

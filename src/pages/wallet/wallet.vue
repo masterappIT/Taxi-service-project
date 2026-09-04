@@ -12,7 +12,7 @@
     </view>
 
     <view class="actions">
-      <view class="action withdraw" @tap="openAmountDialog('withdraw')"><text>兌現</text></view>
+      <view class="action withdraw" @tap="openAmountDialog('withdraw')"><text>提現</text></view>
       <view class="action top-up" @tap="openTopUp"><text>增值</text></view>
     </view>
 
@@ -58,7 +58,7 @@ const openAmountDialog = (type: ActionType) => {
   }
   const isTopUp = type === 'topUp'
   uni.showModal({
-    title: isTopUp ? '錢包增值' : '餘額兌現',
+    title: isTopUp ? '錢包增值' : '餘額提現',
     editable: true,
     placeholderText: '請輸入金額',
     success: ({ confirm, content }) => {
@@ -73,9 +73,9 @@ const openAmountDialog = (type: ActionType) => {
         return
       }
       wallet.withdrawable += isTopUp ? amount : -amount
-      wallet.records.unshift({ id: Date.now(), type: isTopUp ? '增值' : '兌現', amount: isTopUp ? amount : -amount, time: now() })
+      wallet.records.unshift({ id: Date.now(), type: isTopUp ? '增值' : '提現', amount: isTopUp ? amount : -amount, time: now() })
       persist()
-      uni.showToast({ title: isTopUp ? '增值成功' : '兌現成功', icon: 'success' })
+      uni.showToast({ title: isTopUp ? '增值成功' : '提現成功', icon: 'success' })
     }
   })
 }
