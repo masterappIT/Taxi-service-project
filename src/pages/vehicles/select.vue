@@ -13,14 +13,7 @@
     <scroll-view class="vehicle-scroll" scroll-y :show-scrollbar="false">
       <view v-for="group in visibleGroups" :key="group.category" class="vehicle-group">
         <text class="group-label">{{ group.title }}</text>
-        <view v-for="vehicle in group.vehicles" :key="vehicle.id" class="vehicle-card" @tap="selectVehicle(vehicle)">
-          <view v-if="vehicle.brand" class="vehicle-name"><text class="brand">{{ vehicle.brand }}</text><text> {{ vehicle.model }}</text><text class="series">{{ vehicle.series }}</text></view>
-          <image v-if="vehicle.selectable" class="radio" :src="selectedVehicle===vehicle.id?'/static/vehicles/radio-selected.svg':'/static/vehicles/radio.svg'" mode="aspectFit" />
-          <view v-if="vehicle.doubleImage" class="double-image"><image src="/static/vehicles/alphard.png" mode="aspectFill"/><image src="/static/vehicles/vellfire.png" mode="aspectFill"/></view>
-          <image v-else class="vehicle-image" :class="vehicle.imageClass" :src="vehicle.image" mode="aspectFit" />
-          <view class="spec seat"><image src="/static/vehicles/seat.svg" mode="aspectFit"/><text>{{ vehicle.seats }}座</text></view><view class="spec color">不限颜色</view><view v-if="vehicle.modelChoice" class="spec model-choice">不限車款</view>
-          <view class="price">RMB¥{{ vehicle.price }}</view><text class="discount">已減 ¥200</text>
-        </view>
+        <VehicleCard v-for="vehicle in group.vehicles" :key="vehicle.id" :vehicle="vehicle" :selectable="vehicle.selectable" :selected="selectedVehicle===vehicle.id" @select="selectVehicle(vehicle)" />
       </view><view class="bottom-space" />
     </scroll-view>
     <TripEditSheet
@@ -39,13 +32,14 @@ import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { useTripStore } from '../../stores/trip'
 import { openCachedPage, closeCachedPage } from '../../utils/navigation'
 import TripEditSheet from '../../components/home/TripEditSheet.vue'
+import VehicleCard from '../../components/vehicles/VehicleCard.vue'
+import type { Vehicle } from '../../types/vehicle'
 type Category='all'|'standard-mpv'|'premium-mpv'|'standard-car'|'premium-car'
-interface Vehicle{id:string;brand?:string;model?:string;series?:string;seats:number;price:number;image:string;imageClass?:string;doubleImage?:boolean;selectable?:boolean;modelChoice?:boolean}
 interface VehicleGroup{category:Exclude<Category,'all'>;title:string;vehicles:Vehicle[]}
 const {responsiveStyle}=useResponsiveCanvas();const tripStore=useTripStore();const activeCategory=ref<Category>('all');const selectedVehicle=ref('premium-alphard');const editSheetOpen=ref(false)
 const tabs:Array<{label:string;value:Category}>=[{label:'全部',value:'all'},{label:'普通MPV',value:'standard-mpv'},{label:'高級MPV',value:'premium-mpv'},{label:'普通轎車',value:'standard-car'},{label:'頂級轎車',value:'premium-car'}]
 const groups:VehicleGroup[]=[
-{category:'standard-mpv',title:'普通跨境商務車',vehicles:[{id:'standard-mpv',seats:6,price:700,image:'',doubleImage:true,modelChoice:true}]},
+{category:'standard-mpv',title:'普通跨境商務車',vehicles:[{id:'standard-mpv',seats:6,price:700,image:'',doubleImage:true,modelChoice:true,selectable:true}]},
 {category:'premium-mpv',title:'高級跨境商務車',vehicles:[{id:'premium-vellfire',brand:'Toyota',model:'Vellfire',series:'20系',seats:7,price:800,image:'/static/vehicles/vellfire.png',selectable:true},{id:'premium-alphard',brand:'Toyota',model:'Alphard',series:'30系',seats:6,price:800,image:'/static/vehicles/alphard.png',selectable:true}]},
 {category:'standard-car',title:'普通跨境轎車',vehicles:[{id:'tesla-s',brand:'Tesla',model:'Model',series:'S',seats:5,price:800,image:'/static/vehicles/tesla-s.png',selectable:true,imageClass:'tesla-s'},{id:'tesla-x',brand:'Tesla',model:'Model',series:'X',seats:7,price:800,image:'/static/vehicles/tesla-x.png',selectable:true},{id:'tesla-y',brand:'Tesla',model:'Model',series:'Y',seats:5,price:800,image:'/static/vehicles/tesla-y.png',selectable:true},{id:'tesla-3',brand:'Tesla',model:'Model',series:'3',seats:5,price:800,image:'/static/vehicles/tesla-3.png',selectable:true}]},
 {category:'premium-car',title:'頂級跨境轎車',vehicles:[]}]
@@ -62,7 +56,7 @@ const cityName=(value:string|undefined,fallback:string)=>{
 const originLabel=computed(()=>cityName(tripStore.activeTrip?.origin,'香港'))
 const destinationLabel=computed(()=>cityName(tripStore.activeTrip?.destination,'深圳'))
 const bookingTime=computed(()=>tripStore.departureTime||'March 15 2024 14:00')
-const selectVehicle=(vehicle:Vehicle)=>{selectedVehicle.value=vehicle.id;if(vehicle.selectable)openCachedPage('/pages/vehicles/selected')}
+const selectVehicle=(vehicle:Vehicle)=>{if(!vehicle.selectable)return;selectedVehicle.value=vehicle.id;tripStore.setChosenVehicle(vehicle);openCachedPage('/pages/vehicles/selected')}
 const saveTripChanges=(origin:string,destination:string,departureTime:string)=>{tripStore.setRoute(origin,destination);tripStore.setDepartureTime(departureTime);editSheetOpen.value=false}
 const goBack=()=>closeCachedPage('/pages/index/index')
 </script>
