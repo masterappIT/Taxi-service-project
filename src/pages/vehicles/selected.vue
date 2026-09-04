@@ -75,7 +75,7 @@ const toggleExtra = (id: string) => {
     ? selectedExtras.value.filter((extraId) => extraId !== id)
     : [...selectedExtras.value, id]
 }
-const goNext = () => openCachedPage('/pages/orders/detail')
+const goNext = () => openCachedPage('/pages/vehicles/confirm')
 </script>
 
 <style scoped>

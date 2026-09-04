@@ -1,7 +1,7 @@
 <template>
   <view class="page" :style="responsiveStyle">
     <view class="header">
-      <view class="back-button" @tap="goBack"><image src="/static/vehicles/back.svg" mode="aspectFit" /></view>
+      <view class="back-button" @tap.stop="goBack"><image src="/static/vehicles/back.svg" mode="aspectFit" /></view>
       <view class="route-summary" @tap="editSheetOpen = true">
         <image class="origin-icon" src="/static/vehicles/origin.svg" mode="aspectFit" /><text class="origin">{{ originLabel }}</text>
         <image class="route-icon" src="/static/vehicles/route.svg" mode="aspectFit" />
