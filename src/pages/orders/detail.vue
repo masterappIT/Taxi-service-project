@@ -7,18 +7,26 @@
     <view class="assist"><image src="/static/orders/help.svg" mode="aspectFit" /><text>訂單協助</text></view>
     <view class="status"><image src="/static/orders/status-pending.svg" mode="aspectFit" /><text>待確認</text></view>
     <view class="card">
-      <view class="locations"><view><image src="/static/orders/origin.svg" mode="aspectFit" /><text>香港國際機場</text></view><view><image src="/static/orders/destination.svg" mode="aspectFit" /><text>深圳灣口岸</text></view></view>
-      <view class="times"><text>上車時間 ：2024年3月15日 14:00</text><text>到達時間 ：2024年3月15日 14:00</text></view>
+      <view class="locations"><view><image src="/static/orders/origin.svg" mode="aspectFit" /><text>{{ originLabel }}</text></view><view><image src="/static/orders/destination.svg" mode="aspectFit" /><text>{{ destinationLabel }}</text></view></view>
+      <view class="times"><text>上車時間 ：{{ bookingTime }}</text><text>到達時間 ：{{ bookingTime }}</text></view>
       <view class="passenger-title">乘客及聯絡資料：</view><view class="passenger"><view><image src="/static/orders/passenger.svg" mode="aspectFit" /><text>李XX（先生）</text></view><view><image src="/static/orders/phone.svg" mode="aspectFit" /><text>852 - 53**8469</text></view></view>
-      <view class="payment"><text>交易時間剩餘：05:00</text><text class="amount">RMB¥800.00</text><view class="pay-tag">待付款</view></view>
-      <view class="detail"><text class="detail-title">訂單詳細</text><text class="detail-date">2024/03/15</text><view class="line"/><view class="row"><text>高級跨境商務車（7/8座）</text><text>¥ 800</text></view><view class="row"><text>加急附加費</text><text>¥ 100</text></view><view class="row"><text>優惠券抵扣</text><text>-¥ 100</text></view><view class="total">Total： ¥ 800</view><button class="cancel" @tap="cancelOrder">取消</button></view>
+      <view class="payment"><text>交易時間剩餘：05:00</text><text class="amount">RMB¥{{ selectedVehicle.price.toFixed(2) }}</text><view class="pay-tag">待付款</view></view>
+      <view class="detail"><text class="detail-title">訂單詳細</text><text class="detail-date">2024/03/15</text><view class="line"/><view class="row"><text>{{ selectedVehicle.title }}（{{ selectedVehicle.seats }}座）</text><text>¥ {{ selectedVehicle.price }}</text></view><view class="row"><text>加急附加費</text><text>¥ 100</text></view><view class="row"><text>優惠券抵扣</text><text>-¥ 100</text></view><view class="total">Total： ¥ {{ selectedVehicle.price }}</view><button class="cancel" @tap="cancelOrder">取消</button></view>
     </view>
   </view>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
+import { useTripStore } from '../../stores/trip'
 import { closeCachedPage } from '../../utils/navigation'
+const tripStore = useTripStore()
 const { responsiveStyle } = useResponsiveCanvas()
+const selectedVehicle = computed(() => tripStore.selectedVehicle || { id: '', title: '高級跨境商務車', seats: 7, price: 800 })
+const cityLabel = (value: string | undefined, fallback: string) => value?.split('·')[0]?.trim() || fallback
+const originLabel = computed(() => cityLabel(tripStore.activeTrip?.origin, '香港國際機場'))
+const destinationLabel = computed(() => cityLabel(tripStore.activeTrip?.destination, '深圳灣口岸'))
+const bookingTime = computed(() => tripStore.departureTime || '2024年3月15日 14:00')
 const goBack = () => closeCachedPage('/pages/orders/orders')
 const cancelOrder = () => uni.showToast({ title: '訂單取消功能開發中', icon: 'none' })
 </script>

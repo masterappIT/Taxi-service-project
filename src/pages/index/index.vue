@@ -44,7 +44,7 @@
       <BookingTimePicker v-if="bookingTimePicker" @close="bookingTimePicker = false" @confirm="confirmDepartureTime" />
     </template>
     <view class="nav-layer">
-      <HomeBottomNav @services="showComingSoon('快捷服務')" @trips="openTrips" />
+      <HomeBottomNav @services="openSupport" @trips="openTrips" />
     </view>
   </view>
   <!-- #ifdef MP-WEIXIN -->
@@ -57,12 +57,15 @@
   <OrdersPage v-if="visitedPages.has('/pages/orders/orders')" v-show="activePagePath === '/pages/orders/orders'" />
   <OrderDetailPage v-if="visitedPages.has('/pages/orders/detail')" v-show="activePagePath === '/pages/orders/detail'" />
   <VehicleSelectPage v-if="visitedPages.has('/pages/vehicles/select')" v-show="activePagePath === '/pages/vehicles/select'" />
+  <VehicleSelectedPage v-if="visitedPages.has('/pages/vehicles/selected')" v-show="activePagePath === '/pages/vehicles/selected'" />
+  <VehicleConfirmPage v-if="visitedPages.has('/pages/vehicles/confirm')" v-show="activePagePath === '/pages/vehicles/confirm'" />
   <AccountPage v-if="visitedPages.has('/pages/account/account')" v-show="activePagePath === '/pages/account/account'" />
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
   <CommonDataPage v-if="visitedPages.has('/pages/common-data/common-data')" v-show="activePagePath === '/pages/common-data/common-data'" />
   <CouponsPage v-if="visitedPages.has('/pages/coupons/coupons')" v-show="activePagePath === '/pages/coupons/coupons'" />
   <ComplaintsPage v-if="visitedPages.has('/pages/complaints/complaints')" v-show="activePagePath === '/pages/complaints/complaints'" />
+  <SupportChatPage v-if="visitedPages.has('/pages/support/chat')" v-show="activePagePath === '/pages/support/chat'" />
   <!-- #endif -->
 </template>
 
@@ -93,12 +96,15 @@ import MessageDetailPage from '../messages/detail.vue'
 import OrdersPage from '../orders/orders.vue'
 import OrderDetailPage from '../orders/detail.vue'
 import VehicleSelectPage from '../vehicles/select.vue'
+import VehicleSelectedPage from '../vehicles/selected.vue'
+import VehicleConfirmPage from '../vehicles/confirm.vue'
 import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'
 import CommonDataPage from '../common-data/common-data.vue'
 import CouponsPage from '../coupons/coupons.vue'
 import ComplaintsPage from '../complaints/complaints.vue'
+import SupportChatPage from '../support/chat.vue'
 // #endif
 
 type RideMode = 'cross-border' | 'business'
@@ -179,6 +185,7 @@ const openTrips = () => {
   tripStore.setRoute(origin.value, destination.value)
   openCachedPage('/pages/trips/trips')
 }
+const openSupport = () => openCachedPage('/pages/support/chat')
 const showComingSoon = (name: string) => uni.showToast({ title: `${name}功能開發中`, icon: 'none' })
 </script>
 
