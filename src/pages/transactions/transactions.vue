@@ -40,7 +40,7 @@ import { closeCachedPage, openCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
 const filterOpen = ref(false)
-const goBack = () => closeCachedPage('/pages/wallet/wallet')
+const goBack = () => openCachedPage('/pages/wallet/wallet')
 const openTopUpDetail = () => openCachedPage('/pages/top-up/detail/detail')
 const openWithdrawDetail = () => openCachedPage('/pages/withdraw/detail')
 const openRefundDetail = () => openCachedPage('/pages/refund/detail')
