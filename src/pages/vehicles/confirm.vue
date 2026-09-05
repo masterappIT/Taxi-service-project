@@ -133,7 +133,10 @@ const confirmPayment = () => {
   paymentOpen.value = false
   paymentSuccessOpen.value = true
 }
-const closePaymentSuccess = () => { paymentSuccessOpen.value = false }
+const closePaymentSuccess = () => {
+  paymentSuccessOpen.value = false
+  openCachedPage('/pages/vehicles/booking-success')
+}
 </script>
 
 <style scoped>

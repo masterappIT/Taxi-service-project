@@ -21,7 +21,15 @@ export default {
   data() {
     const { currency, label, loadSettings, setCurrency } = useCurrency()
     loadSettings()
-    return { showSplash: true, splashLeaving: false, swipeStartX: 0, swipeStartY: 0, currency, label, switchCurrency: setCurrency }
+    // The mini-program page host can remain mounted while App.vue lifecycle
+    // hooks are deferred, so the splash must not cover native pages there.
+    // #ifdef MP-WEIXIN
+    const initialShowSplash = false
+    // #endif
+    // #ifndef MP-WEIXIN
+    const initialShowSplash = true
+    // #endif
+    return { showSplash: initialShowSplash, splashLeaving: false, swipeStartX: 0, swipeStartY: 0, currency, label, switchCurrency: setCurrency }
   },
   methods: {
     handleTouchStart(event) {

@@ -73,6 +73,7 @@
   <VehicleSelectPage v-if="visitedPages.has('/pages/vehicles/select')" v-show="activePagePath === '/pages/vehicles/select'" />
   <VehicleSelectedPage v-if="visitedPages.has('/pages/vehicles/selected')" v-show="activePagePath === '/pages/vehicles/selected'" />
   <VehicleConfirmPage v-if="visitedPages.has('/pages/vehicles/confirm')" v-show="activePagePath === '/pages/vehicles/confirm'" />
+  <BookingSuccessPage v-if="visitedPages.has('/pages/vehicles/booking-success')" v-show="activePagePath === '/pages/vehicles/booking-success'" />
   <AccountPage v-if="visitedPages.has('/pages/account/account')" v-show="activePagePath === '/pages/account/account'" />
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
@@ -124,6 +125,7 @@ import OrderDetailPage from '../orders/detail.vue'
 import VehicleSelectPage from '../vehicles/select.vue'
 import VehicleSelectedPage from '../vehicles/selected.vue'
 import VehicleConfirmPage from '../vehicles/confirm.vue'
+import BookingSuccessPage from '../vehicles/booking-success.vue'
 import AccountPage from '../account/account.vue'
 import SettingsPage from '../settings/settings.vue'
 import WalletPage from '../wallet/wallet.vue'

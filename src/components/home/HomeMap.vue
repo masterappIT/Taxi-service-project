@@ -1,5 +1,5 @@
 <template>
-    <view class="map-layer" :class="{ 'full-screen': fullScreen }" aria-label="地圖區域">
+  <view class="map-layer" :class="{ 'full-screen': fullScreen }" aria-label="地圖區域">
     <!-- #ifdef MP-WEIXIN -->
     <map
       class="native-map"
