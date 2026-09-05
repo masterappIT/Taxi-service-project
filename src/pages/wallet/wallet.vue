@@ -6,7 +6,7 @@
     </view>
 
     <view class="balance-card">
-      <text class="balance-label">可提餘額</text>
+      <text class="balance-label">現金餘額</text>
       <text class="balance">HKD${{ wallet.withdrawable.toFixed(2) }}</text>
       <text class="fare-balance">車費餘額：¥{{ wallet.fare.toFixed(2) }}</text>
     </view>

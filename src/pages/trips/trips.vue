@@ -69,6 +69,7 @@ const handleWalletAction = (name: string) => {
 }
 const handleCommonAction = (name: string) => {
   if (name === '常用資料') return openCachedPage('/pages/common-data/common-data')
+  if (name === '我的銀行卡') return openCachedPage('/pages/bank-card/bank-card')
   if (name === '邀請好友') return openCachedPage('/pages/invite/invite')
   if (name === '我的投訴') return openCachedPage('/pages/complaints/complaints')
   if (name === '聯繫客服') return openCustomerService()

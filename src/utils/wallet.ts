@@ -13,7 +13,7 @@ export type PaymentAllocation = {
 }
 
 export const readWallet = (): WalletState => {
-  const stored = uni.getStorageSync('wallet-state') as Partial<WalletState> | ''
+  const stored = uni.getStorageSync('wallet-state') as Partial<WalletState> | null | undefined
   return {
     withdrawable: Math.max(0, Number(stored?.withdrawable) || 0),
     fare: Math.max(0, Number(stored?.fare) || 0),

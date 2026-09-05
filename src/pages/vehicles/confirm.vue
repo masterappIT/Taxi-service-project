@@ -57,10 +57,10 @@
         <view class="payment-amount"><text class="payment-currency">¥</text><text class="payment-number">{{ total }}</text></view>
         <text class="payment-method-label">支付方式</text>
         <view class="payment-options wallet-options">
-          <view class="payment-option" @tap="selectedPayment = 'fare-wallet'"><image src="/static/vehicles/payment/payment-wallet-fare.svg" mode="aspectFit" /><view class="payment-option-copy"><text>我的錢包</text><text class="payment-balance">（車費餘額$100）</text></view><image class="payment-radio" :src="selectedPayment === 'fare-wallet' ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
-          <view class="payment-option" @tap="selectedPayment = 'cash-wallet'"><image src="/static/vehicles/payment/payment-wallet-cash.svg" mode="aspectFit" /><view class="payment-option-copy"><text>我的錢包</text><text class="payment-balance">（現金餘額$100）</text></view><image class="payment-radio" :src="selectedPayment === 'cash-wallet' ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
+          <view class="payment-option" @tap="toggleWallet('fare')"><image src="/static/vehicles/payment/payment-wallet-fare.svg" mode="aspectFit" /><view class="payment-option-copy"><text>車費餘額</text><text class="payment-balance">（{{ format(wallet.fare, 2) }}）</text></view><image class="payment-radio" :src="walletSelections.fare ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
+          <view class="payment-option" @tap="toggleWallet('cash')"><image src="/static/vehicles/payment/payment-wallet-cash.svg" mode="aspectFit" /><view class="payment-option-copy"><text>現金餘額</text><text class="payment-balance">（{{ format(wallet.withdrawable, 2) }}）</text></view><image class="payment-radio" :src="walletSelections.cash ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
         </view>
-        <view class="payment-options external-options">
+        <view v-if="externalAllocation > 0" class="payment-options external-options">
           <view class="payment-option" @tap="selectedPayment = 'wechat'"><image src="/static/vehicles/payment/payment-wechat.svg" mode="aspectFit" /><text>微信支付（支持香港/澳門）</text><image class="payment-radio" :src="selectedPayment === 'wechat' ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
           <!-- #ifndef MP-WEIXIN -->
           <view class="payment-option" @tap="selectedPayment = 'alipay'"><image src="/static/vehicles/payment/payment-alipay.svg" mode="aspectFit" /><text>支付寶支付</text><image class="payment-radio" :src="selectedPayment === 'alipay' ? '/static/vehicles/payment/payment-radio-selected.svg' : '/static/vehicles/payment/payment-radio-unselected.svg'" mode="aspectFit" /></view>
@@ -90,15 +90,22 @@ import TripEditSheet from '../../components/home/TripEditSheet.vue'
 import VehicleCard from '../../components/vehicles/VehicleCard.vue'
 import HomeMap from '../../components/home/HomeMap.vue'
 import { useCurrency } from '../../composables/useCurrency'
+import { reactive } from 'vue'
+import { persistWallet, readWallet, type WalletState } from '../../utils/wallet'
 const { responsiveStyle } = useResponsiveCanvas()
 const { format } = useCurrency()
+const wallet = reactive<WalletState>(readWallet())
+const walletSelections = reactive({ fare: true, cash: true })
+const fareAllocation = computed(() => walletSelections.fare ? Math.min(wallet.fare, Number(total.value)) : 0)
+const cashAllocation = computed(() => walletSelections.cash ? Math.min(wallet.withdrawable, Math.max(0, Number(total.value) - fareAllocation.value)) : 0)
+const externalAllocation = computed(() => Math.max(0, Number(total.value) - fareAllocation.value - cashAllocation.value))
 const tripStore = useTripStore()
 const editSheetOpen = ref(false)
 const rideForOtherOpen = ref(false)
 const detailPriceOpen = ref(false)
 const paymentOpen = ref(false)
 const paymentSuccessOpen = ref(false)
-const selectedPayment = ref('fare-wallet')
+const selectedPayment = ref('wechat')
 const vehicle = computed<Vehicle>(() => tripStore.chosenVehicle || { id: 'premium-vellfire', brand: 'Toyota', model: 'Vellfire', series: '20系', seats: 7, price: 800, image: '/static/vehicles/vellfire.png', selectable: true })
 const originLabel = computed(() => cityName(tripStore.activeTrip?.origin, '香港'))
 const destinationLabel = computed(() => cityName(tripStore.activeTrip?.destination, '深圳'))
@@ -113,7 +120,19 @@ const goBack = () => openCachedPage('/pages/index/index')
 const openCoupons = () => openCachedPage('/pages/coupons/coupons')
 const payNow = () => { paymentOpen.value = true }
 const closePayment = () => { paymentOpen.value = false }
-const confirmPayment = () => { paymentOpen.value = false; paymentSuccessOpen.value = true }
+const toggleWallet = (type: 'fare' | 'cash') => { walletSelections[type] = !walletSelections[type] }
+const confirmPayment = () => {
+  if (externalAllocation.value > 0 && !selectedPayment.value) {
+    uni.showToast({ title: '請選擇外部付款方式', icon: 'none' })
+    return
+  }
+  wallet.fare = Math.max(0, wallet.fare - fareAllocation.value)
+  wallet.withdrawable = Math.max(0, wallet.withdrawable - cashAllocation.value)
+  wallet.records.unshift({ id: Date.now(), type: '出行支付', amount: -Number(total.value), time: new Date().toISOString(), balanceType: 'fare' })
+  persistWallet(wallet)
+  paymentOpen.value = false
+  paymentSuccessOpen.value = true
+}
 const closePaymentSuccess = () => { paymentSuccessOpen.value = false }
 </script>
 
