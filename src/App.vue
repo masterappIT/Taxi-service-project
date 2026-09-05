@@ -94,8 +94,8 @@ body,
  width: 100%;
   max-width: none;
   height: 100vh;
-  height: 100dvh;
-  min-height: 100dvh;
+  height: 100vh;
+  min-height: 100vh;
   box-sizing: border-box;
   background: #56657e;
   overflow: hidden;

@@ -16,6 +16,19 @@ export function useCurrency() {
   const format = (rmbAmount: number, decimals = 0) => `${symbol.value}${convert(rmbAmount).toFixed(decimals)}`
   const setCurrency = (value: Currency) => { const normalized = normalizeCurrency(value); if (!normalized) return; currency.value = normalized; uni.setStorageSync('display-currency', normalized) }
   const setExchangeRate = (value: number) => { if (Number.isFinite(value) && value > 0) { exchangeRate.value = value; uni.setStorageSync('exchange-rate', value) } }
-  const loadSettings = async () => { if (loaded) return; loaded = true; try { const settings = await getSettings(); const savedCurrency = normalizeCurrency(settings.currency); if (savedCurrency) setCurrency(savedCurrency); if (Number.isFinite(settings.exchangeRate)) setExchangeRate(settings.exchangeRate) } catch { /* use cached defaults */ } }
+  const loadSettings = async () => {
+    if (loaded) return
+    loaded = true
+    // 微信開發者工具與真機無法直接存取本機 localhost，預覽時使用快取／預設值。
+    // #ifdef MP-WEIXIN
+    return
+    // #endif
+    try {
+      const settings = await getSettings()
+      const savedCurrency = normalizeCurrency(settings.currency)
+      if (savedCurrency) setCurrency(savedCurrency)
+      if (Number.isFinite(settings.exchangeRate)) setExchangeRate(settings.exchangeRate)
+    } catch { /* use cached defaults */ }
+  }
   return { currency, exchangeRate, symbol, label, convert, format, setCurrency, setExchangeRate, loadSettings }
 }
