@@ -18,6 +18,7 @@
     { "path": "pages/wallet/wallet", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/withdraw/withdraw", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/withdraw/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/withdraw/alipay-detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/withdraw/alipay", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/top-up/top-up", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/bank-card/bank-card", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
@@ -52,4 +53,3 @@
 		]
 	}
 }
-

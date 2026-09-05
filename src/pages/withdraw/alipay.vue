@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
-import { closeCachedPage } from '../../utils/navigation'
+import { closeCachedPage, openCachedPage } from '../../utils/navigation'
 const { responsiveStyle } = useResponsiveCanvas()
 const accountName = ref('')
 const accountNumber = ref('')
@@ -67,7 +67,7 @@ const submit = () => {
 
 const confirmWithdraw = () => {
   showConfirm.value = false
-  uni.showToast({ title: '提現申請已提交', icon: 'success' })
+  openCachedPage('/pages/withdraw/alipay-detail')
 }
 </script>
 <style scoped>
