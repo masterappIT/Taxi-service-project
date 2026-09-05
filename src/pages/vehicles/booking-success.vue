@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import HomeMap from '../../components/home/HomeMap.vue'
-import { goHome } from '../../utils/navigation'
+import { openCachedPage } from '../../utils/navigation'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 
 const { responsiveStyle } = useResponsiveCanvas()
@@ -31,9 +31,9 @@ const originLabel = '香港'
 const destinationLabel = '深圳'
 const bookingTime = 'March 15 2024 14:00'
 
-const goBack = () => goHome()
+const goBack = () => openCachedPage('/pages/index/index')
 const cancelBooking = () => uni.showToast({ title: '取消用車功能開發中', icon: 'none' })
-const showBookingDetail = () => uni.showToast({ title: '訂單詳細功能開發中', icon: 'none' })
+const showBookingDetail = () => openCachedPage('/pages/orders/detail?status=traveling')
 </script>
 
 <style scoped>
