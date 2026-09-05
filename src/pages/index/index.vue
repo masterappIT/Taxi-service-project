@@ -78,7 +78,7 @@
   <SettingsPage v-if="visitedPages.has('/pages/settings/settings')" v-show="activePagePath === '/pages/settings/settings'" />
   <WalletPage v-if="visitedPages.has('/pages/wallet/wallet')" v-show="activePagePath === '/pages/wallet/wallet'" />
   <TopUpPage v-if="visitedPages.has('/pages/top-up/top-up')" v-show="activePagePath === '/pages/top-up/top-up'" />
-  <TopUpDetailPage v-if="visitedPages.has('/pages/top-up/detail/detail')" v-show="activePagePath === '/pages/top-up/detail/detail'" />
+  <TopUpDetailPage v-if="visitedPages.has('/pages/top-up/detail/detail')" :key="cachedPageUrl" v-show="activePagePath === '/pages/top-up/detail/detail'" />
   <VoucherClaimPage v-if="visitedPages.has('/pages/voucher/claim')" v-show="activePagePath === '/pages/voucher/claim'" />
   <WithdrawPage v-if="visitedPages.has('/pages/withdraw/withdraw')" v-show="activePagePath === '/pages/withdraw/withdraw'" />
   <WithdrawDetailPage v-if="visitedPages.has('/pages/withdraw/detail')" v-show="activePagePath === '/pages/withdraw/detail'" />

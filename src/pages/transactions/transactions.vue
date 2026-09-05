@@ -11,9 +11,9 @@
       <view class="table-head"><text>類型</text><text>詳細</text><text>金額</text></view>
       <view
         v-for="(record, index) in visibleRecords"
-        :key="record.type"
+        :key="record.id"
         :class="['record-row', `record-slot-${index}`]"
-        @tap="openRecord(record.type)"
+        @tap="openRecord(record)"
       >
         <image v-if="index < visibleRecords.length - 1" class="row-divider" src="/static/transactions/row-divider.svg" mode="aspectFit" />
         <text class="record-kind">{{ record.kind }}</text>
@@ -56,11 +56,14 @@ const pendingIncomeType = ref(incomeType.value)
 const transactionType = ref<'all' | 'travel-order' | 'withdraw' | 'balance' | 'topup' | 'cancel-order'>('all')
 const pendingTransactionType = ref(transactionType.value)
 const records = [
-  { type: 'topup' as const, kind: '收入', detail: '餘額增值', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const },
-  { type: 'cancel-order' as const, kind: '退款', detail: '跨境出行 取消訂單', time: '01/01 12:00:00', amount: '-HKD$1000', amountTone: 'negative' as const },
-  { type: 'withdraw' as const, kind: '提現', detail: '餘額提現', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, status: '已到帳' },
-  { type: 'travel-order' as const, kind: '支出', detail: '跨境出行 餘額支付', time: '01/01 12:00:00', amount: '-HKD$1000', amountTone: 'negative' as const, order: '訂單編號：282678634' },
-  { type: 'alipay-withdraw' as const, kind: '提現', detail: '支付寶提現', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, status: '已到帳' }
+  { id: 'topup-success', type: 'topup' as const, kind: '收入', detail: '餘額增值', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, transactionStatus: 'success' as const },
+  { id: 'topup-card-failed', type: 'topup' as const, kind: '收入', detail: '餘額增值（信用卡）', time: '01/01 12:00:00', amount: '+HKD$101', amountTone: 'positive' as const, status: '失敗', transactionStatus: 'failed' as const, payment: 'card' as const },
+  { id: 'topup-alipay-failed', type: 'topup' as const, kind: '收入', detail: '餘額增值（支付寶）', time: '01/01 12:00:00', amount: '+HKD$101', amountTone: 'positive' as const, status: '失敗', transactionStatus: 'failed' as const, payment: 'alipay' as const },
+  { id: 'topup-wechat-failed', type: 'topup' as const, kind: '收入', detail: '餘額增值（微信支付）', time: '01/01 12:00:00', amount: '+HKD$101', amountTone: 'positive' as const, status: '失敗', transactionStatus: 'failed' as const, payment: 'wechat' as const },
+  { id: 'cancel-order-success', type: 'cancel-order' as const, kind: '退款', detail: '跨境出行 取消訂單', time: '01/01 12:00:00', amount: '-HKD$1000', amountTone: 'negative' as const, transactionStatus: 'success' as const },
+  { id: 'withdraw-success', type: 'withdraw' as const, kind: '提現', detail: '餘額提現', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, status: '已到帳', transactionStatus: 'success' as const },
+  { id: 'travel-order-success', type: 'travel-order' as const, kind: '支出', detail: '跨境出行 餘額支付', time: '01/01 12:00:00', amount: '-HKD$1000', amountTone: 'negative' as const, order: '訂單編號：282678634', transactionStatus: 'success' as const },
+  { id: 'alipay-withdraw-success', type: 'alipay-withdraw' as const, kind: '提現', detail: '支付寶提現', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, status: '已到帳', transactionStatus: 'success' as const }
 ]
 const filterTitle = computed(() => {
   if (incomeType.value === 'all' && transactionType.value === 'all') return '全部紀錄'
@@ -81,11 +84,17 @@ const previousMonthStyle = computed(() => ({ top: previousMonthTop.value }))
 const previousSummaryStyle = computed(() => ({ top: `${Number.parseFloat(previousMonthTop.value) + 34}px` }))
 const goBack = () => openCachedPage('/pages/wallet/wallet')
 const openTopUpDetail = () => openCachedPage('/pages/top-up/detail/detail')
+const openFailureDetail = (amount: string, payment: 'card' | 'alipay' | 'wechat') => openCachedPage(`/pages/top-up/detail/detail?status=failed&amount=${encodeURIComponent(amount.replace(/[^\d.]/g, ''))}&payment=${payment}`)
 const openWithdrawDetail = () => openCachedPage('/pages/withdraw/detail')
 const openAlipayDetail = () => openCachedPage('/pages/withdraw/alipay-detail')
 const openRefundDetail = () => openCachedPage('/pages/refund/detail')
 const openExpenseDetail = () => openCachedPage('/pages/transactions/expense-detail')
-const openRecord = (type: typeof records[number]['type']) => {
+const openRecord = (record: typeof records[number]) => {
+  if (record.transactionStatus === 'failed') {
+    openFailureDetail(record.amount, record.payment)
+    return
+  }
+  const { type } = record
   if (type === 'topup') openTopUpDetail()
   else if (type === 'cancel-order') openRefundDetail()
   else if (type === 'withdraw') openWithdrawDetail()
