@@ -45,9 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
-import { closeCachedPage, openCachedPage } from '../../utils/navigation'
+import { cachedPageUrl, closeCachedPage, openCachedPage } from '../../utils/navigation'
 
 const { responsiveStyle } = useResponsiveCanvas()
 const filterOpen = ref(false)
@@ -65,6 +66,39 @@ const records = [
   { id: 'travel-order-success', type: 'travel-order' as const, kind: '支出', detail: '跨境出行 餘額支付', time: '01/01 12:00:00', amount: '-HKD$1000', amountTone: 'negative' as const, order: '訂單編號：282678634', transactionStatus: 'success' as const },
   { id: 'alipay-withdraw-success', type: 'alipay-withdraw' as const, kind: '提現', detail: '支付寶提現', time: '01/01 12:00:00', amount: '+HKD$1000', amountTone: 'positive' as const, status: '已到帳', transactionStatus: 'success' as const }
 ]
+const readRequestedTransactionType = (url?: string) => {
+  const value = url?.match(/[?&]transactionType=([^&#]+)/)?.[1]
+  return value === 'travel-order' || value === 'withdraw' || value === 'balance' || value === 'topup' || value === 'cancel-order'
+    ? value
+    : 'all'
+}
+const applyRequestedTransactionType = (url?: string) => {
+  const nextType = readRequestedTransactionType(url)
+  if (nextType === 'all') return
+  transactionType.value = nextType
+  pendingTransactionType.value = nextType
+  incomeType.value = nextType === 'travel-order' || nextType === 'cancel-order' ? 'expense' : 'all'
+  pendingIncomeType.value = incomeType.value
+}
+onLoad((options) => {
+  const nextUrl = options ? `?transactionType=${options.transactionType || ''}` : undefined
+  applyRequestedTransactionType(nextUrl)
+})
+onMounted(() => {
+  if (typeof window !== 'undefined' && !cachedPageUrl.value.includes('/pages/transactions/transactions')) {
+    applyRequestedTransactionType(window.location.hash)
+  }
+})
+onShow(() => {
+  if (typeof window !== 'undefined' && !cachedPageUrl.value.includes('/pages/transactions/transactions')) {
+    applyRequestedTransactionType(window.location.hash)
+  }
+})
+watch(cachedPageUrl, (url) => {
+  if (url.includes('/pages/transactions/transactions')) {
+    applyRequestedTransactionType(url)
+  }
+}, { immediate: true })
 const filterTitle = computed(() => {
   if (incomeType.value === 'all' && transactionType.value === 'all') return '全部紀錄'
   if (transactionType.value !== 'all') {
