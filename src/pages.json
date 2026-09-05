@@ -25,6 +25,7 @@
     { "path": "pages/bank-card/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/payment-settings/payment-settings", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/transactions/transactions", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
+    { "path": "pages/transactions/expense-detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/refund/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/top-up/detail/detail", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },
     { "path": "pages/voucher/claim", "style": { "navigationStyle": "custom", "navigationBarTitleText": "" } },

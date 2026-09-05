@@ -4,7 +4,7 @@
       <view class="canvas">
         <HomeMap :latitude="mapLatitude" :longitude="mapLongitude" />
         <HomeHeader :location-label="locationLabel" />
-        <HomeTravelModeSwitch v-model:mode="rideMode" />
+        <HomeTravelModeSwitch :mode="rideMode" @update:mode="switchRideMode" />
         <HomeMapActions @location="useCurrentLocation" />
         <HomeRoutePanel
           v-model:mode="travelMode"
@@ -32,7 +32,7 @@
       </view>
     </view>
     <template v-else>
-      <HomeTravelModeSwitch v-model:mode="rideMode" layout="business" />
+      <HomeTravelModeSwitch :mode="rideMode" layout="business" @update:mode="switchRideMode" />
       <BusinessCharterPanel
         :origin-region="businessOrigin.region"
         :origin-place="businessOrigin.place"
@@ -84,6 +84,7 @@
   <WithdrawDetailPage v-if="visitedPages.has('/pages/withdraw/detail')" v-show="activePagePath === '/pages/withdraw/detail'" />
   <PaymentSettingsPage v-if="visitedPages.has('/pages/payment-settings/payment-settings')" v-show="activePagePath === '/pages/payment-settings/payment-settings'" />
   <TransactionsPage v-if="visitedPages.has('/pages/transactions/transactions')" v-show="activePagePath === '/pages/transactions/transactions'" />
+  <ExpenseDetailPage v-if="visitedPages.has('/pages/transactions/expense-detail')" v-show="activePagePath === '/pages/transactions/expense-detail'" />
   <RefundPage v-if="visitedPages.has('/pages/refund/detail')" v-show="activePagePath === '/pages/refund/detail'" />
   <BankCardPage v-if="visitedPages.has('/pages/bank-card/bank-card')" v-show="activePagePath === '/pages/bank-card/bank-card'" />
   <BankCardAccountPage v-if="visitedPages.has('/pages/bank-card/account')" v-show="activePagePath === '/pages/bank-card/account'" />
@@ -136,6 +137,7 @@ import WithdrawPage from '../withdraw/withdraw.vue'
 import WithdrawDetailPage from '../withdraw/detail.vue'
 import PaymentSettingsPage from '../payment-settings/payment-settings.vue'
 import TransactionsPage from '../transactions/transactions.vue'
+import ExpenseDetailPage from '../transactions/expense-detail.vue'
 import RefundPage from '../refund/detail.vue'
 import BankCardPage from '../bank-card/bank-card.vue'
 import BankCardAccountPage from '../bank-card/account.vue'
@@ -164,6 +166,8 @@ interface BusinessLocation { region: string; place: string }
 interface AddressSelection { region: '大陸' | '香港' | '澳門' | null; name: string; address: string }
 const businessOrigin = ref<BusinessLocation>({ region: '香港', place: '香港國際機場' })
 const businessDestination = ref<BusinessLocation>({ region: '大陸', place: '' })
+const initialBusinessOrigin: BusinessLocation = { region: '香港', place: '香港國際機場' }
+const initialBusinessDestination: BusinessLocation = { region: '大陸', place: '' }
 const departureTime = ref('')
 const flightNumber = ref('')
 const mapLatitude = ref(22.3046)
@@ -172,7 +176,26 @@ const locationLabel = ref('香港 · 油尖旺區')
 const detailedAddress = ref('香港九龍站附近')
 const bookingTimePicker = ref(false)
 let hasShown = false
-const { responsiveStyle } = useResponsiveCanvas()
+const switchRideMode = (mode: RideMode) => {
+  if (mode === rideMode.value) return
+
+  tripStore.switchServiceMode(mode === 'business' ? 'business-charter' : 'cross-border')
+  addressPicker.value = null
+  bookingTimePicker.value = false
+
+  if (mode === 'business') {
+    origin.value = '香港 · 九龍站'
+    destination.value = '廣東 · 深圳灣口岸'
+    departureTime.value = ''
+    flightNumber.value = ''
+    travelMode.value = 'cross-border'
+  } else {
+    businessOrigin.value = { ...initialBusinessOrigin }
+    businessDestination.value = { ...initialBusinessDestination }
+  }
+
+  rideMode.value = mode
+}
 
 onShow(() => {
   if (hasShown) rideMode.value = 'cross-border'

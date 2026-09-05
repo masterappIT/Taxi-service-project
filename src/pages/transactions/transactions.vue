@@ -15,7 +15,7 @@
       <view class="record-row row-0" @tap="openTopUpDetail"><text class="record-kind">收入</text><view class="record-detail"><text>餘額增值</text><text class="record-time">01/01 12:00:00</text></view><text class="record-amount positive">+HKD$1000</text></view>
       <view class="record-row row-1" @tap="openRefundDetail"><text class="record-kind">退款</text><view class="record-detail"><text>跨境出行 取消訂單</text><text class="record-time">01/01 12:00:00</text></view><text class="record-amount negative">-HKD$1000</text></view>
       <view class="record-row row-2" @tap="openWithdrawDetail"><text class="record-kind">提現</text><view class="record-detail"><text>餘額提現</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount positive"><text>+HKD$1000</text></view><text class="record-status">已到帳</text></view>
-      <view class="record-row row-3"><text class="record-kind">支出</text><view class="record-detail"><text>跨境出行 餘額支付</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount negative"><text>-HKD$1000</text></view><text class="record-order">訂單編號：282678634</text></view>
+      <view class="record-row row-3" @tap="openExpenseDetail"><text class="record-kind">支出</text><view class="record-detail"><text>跨境出行 餘額支付</text><text class="record-time">01/01 12:00:00</text></view><view class="record-amount negative"><text>-HKD$1000</text></view><text class="record-order">訂單編號：282678634</text></view>
     </view>
     <view class="month previous-month"><text class="month-number">3</text><text>/2024</text><image src="/static/transactions/section-mark.svg" mode="aspectFit" /></view>
     <view class="summary previous-summary"><text>支出 HKD$ 0.00</text><view class="summary-divider" /><text>收入 HKD$0.00</text></view>
@@ -44,6 +44,7 @@ const goBack = () => openCachedPage('/pages/wallet/wallet')
 const openTopUpDetail = () => openCachedPage('/pages/top-up/detail/detail')
 const openWithdrawDetail = () => openCachedPage('/pages/withdraw/detail')
 const openRefundDetail = () => openCachedPage('/pages/refund/detail')
+const openExpenseDetail = () => openCachedPage('/pages/transactions/expense-detail')
 const openFilter = () => { filterOpen.value = true }
 const closeFilter = () => { filterOpen.value = false }
 const applyFilter = () => { filterOpen.value = false }

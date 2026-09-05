@@ -11,9 +11,14 @@ export const useResponsiveCanvas = () => {
       return
     }
 
-    const { windowWidth, windowHeight } = uni.getWindowInfo()
-    viewportWidth.value = windowWidth
-    viewportHeight.value = windowHeight
+    try {
+      const { windowWidth, windowHeight } = uni.getSystemInfoSync()
+      viewportWidth.value = windowWidth || 430
+      viewportHeight.value = windowHeight || 932
+    } catch {
+      viewportWidth.value = 430
+      viewportHeight.value = 932
+    }
   }
 
   onMounted(() => {
