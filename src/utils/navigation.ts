@@ -26,9 +26,13 @@ export const openCachedPage = (url: string) => {
   if (embeddedHostActive) {
     const targetPath = pagePath(url)
     const targetIndex = cachedPageStack.value.findIndex((entry) => pagePath(entry) === targetPath)
-    cachedPageStack.value = targetIndex >= 0
-      ? cachedPageStack.value.slice(0, targetIndex + 1)
-      : [...cachedPageStack.value, url]
+
+    if (targetIndex >= 0) {
+      cachedPageStack.value = [...cachedPageStack.value.slice(0, targetIndex), url]
+    } else {
+      cachedPageStack.value = [...cachedPageStack.value, url]
+    }
+
     cachedPageUrl.value = url
     if (!cachedVisitedPages.value.includes(targetPath)) {
       cachedVisitedPages.value = [...cachedVisitedPages.value, targetPath]
@@ -65,13 +69,37 @@ export const goHome = () => {
 }
 
 export const closeCachedPage = (fallbackUrl: string) => {
+  const fallbackPath = pagePath(fallbackUrl)
+
   // #ifdef MP-WEIXIN
-  if (embeddedHostActive && cachedPageStack.value.length > 1) {
-    cachedPageStack.value = cachedPageStack.value.slice(0, -1)
-    cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
-    return
+  if (embeddedHostActive) {
+    const fallbackIndex = cachedPageStack.value.findIndex((entry) => pagePath(entry) === fallbackPath)
+
+    if (fallbackIndex >= 0) {
+      cachedPageStack.value = cachedPageStack.value.slice(0, fallbackIndex + 1)
+      cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
+      return
+    }
+
+    if (fallbackPath !== HOME_PATH) {
+      return openCachedPage(fallbackUrl)
+    }
+
+    if (cachedPageStack.value.length > 1) {
+      cachedPageStack.value = cachedPageStack.value.slice(0, -1)
+      cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
+      return
+    }
   }
   // #endif
+
+  if (fallbackPath && fallbackPath !== HOME_PATH) {
+    const pages = getCurrentPages()
+    const hasTargetPage = pages.some((page) => `/${page.route}` === fallbackPath)
+    if (hasTargetPage || pages.length <= 1) {
+      return openCachedPage(fallbackUrl)
+    }
+  }
 
   if (getCurrentPages().length > 1) {
     return uni.navigateBack({ delta: 1, animationType: 'none', animationDuration: 0 })
@@ -81,10 +109,12 @@ export const closeCachedPage = (fallbackUrl: string) => {
 
 export const swipeBack = () => {
   // #ifdef MP-WEIXIN
-  if (embeddedHostActive && cachedPageStack.value.length > 1) {
-    cachedPageStack.value = cachedPageStack.value.slice(0, -1)
-    cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
-    return
+  if (embeddedHostActive) {
+    if (cachedPageStack.value.length > 1) {
+      cachedPageStack.value = cachedPageStack.value.slice(0, -1)
+      cachedPageUrl.value = cachedPageStack.value[cachedPageStack.value.length - 1]
+      return
+    }
   }
   // #endif
 

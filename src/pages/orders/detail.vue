@@ -47,7 +47,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { useTripStore } from '../../stores/trip'
-import { closeCachedPage, cachedPageUrl, openCachedPage } from '../../utils/navigation'
+import { closeCachedPage, cachedPageUrl, cachedPageStack, openCachedPage } from '../../utils/navigation'
 import OrdersBackButton from '../../components/orders/OrdersBackButton.vue'
 const tripStore = useTripStore()
 const { responsiveStyle } = useResponsiveCanvas()
@@ -81,13 +81,58 @@ const selectedVehicle = computed(() => tripStore.chosenVehicle || {
   seats: 7,
   price: 800
 })
-const getCurrentPageSource = () => {
-  const rawUrl = typeof window !== 'undefined' ? window.location.hash : cachedPageUrl.value
-  const params = new URLSearchParams((rawUrl || '').split('?')[1] || '')
-  return params.get('from') || params.get('returnTo') || ''
+const parseQueryParams = (url = '') => {
+  const search = (url || '').split('?')[1] || ''
+  const params: Record<string, string> = {}
+  const pairs = search.split('&')
+  for (const pair of pairs) {
+    if (!pair) continue
+    const [key, ...rest] = pair.split('=')
+    if (!key) continue
+    params[decodeURIComponent(key)] = decodeURIComponent(rest.join('=') || '')
+  }
+  return params
 }
+
+const getCurrentPageSource = () => {
+  const candidates: string[] = []
+  if (cachedPageUrl.value) candidates.push(cachedPageUrl.value)
+  if (typeof window !== 'undefined' && window.location.hash) candidates.push(window.location.hash)
+
+  for (const candidate of candidates) {
+    const params = parseQueryParams(candidate)
+    const source = params.from || params.returnTo || ''
+    if (source) return source
+  }
+
+  return ''
+}
+
+const getSourceFromStack = () => {
+  const currentIndex = cachedPageStack.value.findIndex((entry) => (entry || '').split('?')[0] === '/pages/orders/detail')
+  if (currentIndex < 0) return ''
+
+  const stackEntries = cachedPageStack.value.slice(0, currentIndex + 1)
+  for (let index = stackEntries.length - 1; index >= 0; index -= 1) {
+    const params = parseQueryParams(stackEntries[index])
+    if (params.from === 'profile' || params.returnTo === 'profile') return 'profile'
+    if (params.from === 'orders' || params.returnTo === 'orders') return 'orders'
+  }
+  return ''
+}
+
+const getPreviousStackPath = () => {
+  const currentIndex = cachedPageStack.value.findIndex((entry) => (entry || '').split('?')[0] === '/pages/orders/detail')
+  if (currentIndex <= 0) return ''
+  return (cachedPageStack.value[currentIndex - 1] || '').split('?')[0]
+}
+
 const goBack = () => {
-  if (getCurrentPageSource() === 'profile') return closeCachedPage('/pages/trips/trips')
+  const explicitSource = getCurrentPageSource() || getSourceFromStack()
+  if (explicitSource === 'profile') return closeCachedPage('/pages/trips/trips')
+
+  const previousStackPath = getPreviousStackPath()
+  if (previousStackPath === '/pages/trips/trips') return closeCachedPage('/pages/trips/trips')
   return closeCachedPage('/pages/orders/orders')
 }
 const cancelOrder = () => uni.showToast({ title: '訂單取消功能開發中', icon: 'none' })

@@ -33,7 +33,7 @@ const bookingTime = 'March 15 2024 14:00'
 
 const goBack = () => openCachedPage('/pages/index/index')
 const cancelBooking = () => uni.showToast({ title: '取消用車功能開發中', icon: 'none' })
-const showBookingDetail = () => openCachedPage('/pages/orders/detail?status=traveling')
+const showBookingDetail = () => openCachedPage('/pages/trips/detail?from=booking-success')
 </script>
 
 <style scoped>

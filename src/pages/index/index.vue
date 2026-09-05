@@ -70,6 +70,7 @@
   <MessageDetailPage v-if="visitedPages.has('/pages/messages/detail')" v-show="activePagePath === '/pages/messages/detail'" />
   <OrdersPage v-if="visitedPages.has('/pages/orders/orders')" v-show="activePagePath === '/pages/orders/orders'" />
   <OrderDetailPage v-if="visitedPages.has('/pages/orders/detail')" :key="cachedPageUrl" v-show="activePagePath === '/pages/orders/detail'" />
+  <TripsDetailPage v-if="visitedPages.has('/pages/trips/detail')" :key="cachedPageUrl" v-show="activePagePath === '/pages/trips/detail'" />
   <VehicleSelectPage v-if="visitedPages.has('/pages/vehicles/select')" v-show="activePagePath === '/pages/vehicles/select'" />
   <VehicleSelectedPage v-if="visitedPages.has('/pages/vehicles/selected')" v-show="activePagePath === '/pages/vehicles/selected'" />
   <VehicleConfirmPage v-if="visitedPages.has('/pages/vehicles/confirm')" v-show="activePagePath === '/pages/vehicles/confirm'" />
@@ -115,6 +116,8 @@ import { useResponsiveCanvas } from '../../composables/useResponsiveCanvas'
 import { activateEmbeddedPageHost, cachedPagePath, visitedPages, openCachedPage } from '../../utils/navigation'
 import { reverseGeocode } from '../../services/api'
 import { findLocalRegion } from '../../utils/localRegions'
+
+const { responsiveStyle } = useResponsiveCanvas()
 // #ifdef MP-WEIXIN
 import TripsPage from '../trips/trips.vue'
 import MembershipPage from '../membership/membership.vue'
@@ -124,6 +127,7 @@ import MessagesPage from '../messages/messages.vue'
 import MessageDetailPage from '../messages/detail.vue'
 import OrdersPage from '../orders/orders.vue'
 import OrderDetailPage from '../orders/detail.vue'
+import TripsDetailPage from '../trips/detail.vue'
 import VehicleSelectPage from '../vehicles/select.vue'
 import VehicleSelectedPage from '../vehicles/selected.vue'
 import VehicleConfirmPage from '../vehicles/confirm.vue'
