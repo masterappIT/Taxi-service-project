@@ -215,8 +215,41 @@ class LocationController {
   }
 }
 
+interface CardIdentification { network: 'visa' | 'mastercard' | 'unionpay' | 'amex' | 'jcb' | 'unknown'; valid: boolean; maskedNumber: string }
+
+function cardNetwork(number: string): CardIdentification['network'] {
+  if (/^4/.test(number)) return 'visa'
+  if (/^(5[1-5]|2(?:2[2-9]|[3-6]\d|7[01]))/.test(number)) return 'mastercard'
+  if (/^62/.test(number)) return 'unionpay'
+  if (/^(34|37)/.test(number)) return 'amex'
+  if (/^(352[89]|35[3-8]\d)/.test(number)) return 'jcb'
+  return 'unknown'
+}
+
+function passesLuhn(number: string) {
+  let sum = 0
+  let alternate = false
+  for (let index = number.length - 1; index >= 0; index -= 1) {
+    let digit = Number(number[index])
+    if (alternate) { digit *= 2; if (digit > 9) digit -= 9 }
+    sum += digit
+    alternate = !alternate
+  }
+  return sum % 10 === 0
+}
+
+@Controller('payment-cards')
+class PaymentCardsController {
+  @Post('identify') identify(@Body() body: { cardNumber?: string }) {
+    const number = body.cardNumber?.replace(/\D/g, '') || ''
+    const validLength = number.length >= 12 && number.length <= 19
+    const valid = validLength && passesLuhn(number)
+    return { network: valid ? cardNetwork(number) : 'unknown', valid, maskedNumber: number.length > 4 ? `${'*'.repeat(number.length - 4)}${number.slice(-4)}` : '' }
+  }
+}
+
 @Controller('health') class HealthController { @Get() check() { return { status: 'ok', service: 'taxi-cross-border-api' } } }
-@Module({ controllers: [HealthController, LocationController, SettingsController, RecommendedAddressesController, PublicVehiclesController, PublicMembershipPlansController, AdminAuthController, AdminController, SupportController] }) class AppModule {}
+@Module({ controllers: [HealthController, LocationController, SettingsController, RecommendedAddressesController, PublicVehiclesController, PublicMembershipPlansController, PaymentCardsController, AdminAuthController, AdminController, SupportController] }) class AppModule {}
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const configuredOrigins = (process.env.APP_CORS_ORIGINS || process.env.ADMIN_CORS_ORIGIN || '')
@@ -224,7 +257,7 @@ async function bootstrap() {
     .map(origin => origin.trim())
     .filter(Boolean)
   app.enableCors({
-    origin: [...new Set([...configuredOrigins, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174', 'http://localhost:5177', 'http://127.0.0.1:5177', 'http://localhost:5178', 'http://127.0.0.1:5178', 'http://localhost:5180', 'http://127.0.0.1:5180'])],
+    origin: [...new Set([...configuredOrigins, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174', 'http://localhost:5177', 'http://127.0.0.1:5177', 'http://localhost:5178', 'http://127.0.0.1:5178', 'http://localhost:5180', 'http://127.0.0.1:5180', 'http://localhost:5181', 'http://127.0.0.1:5181'])],
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   })

@@ -85,6 +85,9 @@
   <TransactionsPage v-if="visitedPages.has('/pages/transactions/transactions')" v-show="activePagePath === '/pages/transactions/transactions'" />
   <RefundPage v-if="visitedPages.has('/pages/refund/detail')" v-show="activePagePath === '/pages/refund/detail'" />
   <BankCardPage v-if="visitedPages.has('/pages/bank-card/bank-card')" v-show="activePagePath === '/pages/bank-card/bank-card'" />
+  <BankCardAccountPage v-if="visitedPages.has('/pages/bank-card/account')" v-show="activePagePath === '/pages/bank-card/account'" />
+  <BankCardListPage v-if="visitedPages.has('/pages/bank-card/list')" v-show="activePagePath === '/pages/bank-card/list'" />
+  <BankCardDetailPage v-if="visitedPages.has('/pages/bank-card/detail')" v-show="activePagePath === '/pages/bank-card/detail'" />
   <CommonDataPage v-if="visitedPages.has('/pages/common-data/common-data')" v-show="activePagePath === '/pages/common-data/common-data'" />
   <CouponsPage v-if="visitedPages.has('/pages/coupons/coupons')" v-show="activePagePath === '/pages/coupons/coupons'" />
   <ComplaintsPage v-if="visitedPages.has('/pages/complaints/complaints')" v-show="activePagePath === '/pages/complaints/complaints'" />
@@ -133,6 +136,9 @@ import PaymentSettingsPage from '../payment-settings/payment-settings.vue'
 import TransactionsPage from '../transactions/transactions.vue'
 import RefundPage from '../refund/detail.vue'
 import BankCardPage from '../bank-card/bank-card.vue'
+import BankCardAccountPage from '../bank-card/account.vue'
+import BankCardListPage from '../bank-card/list.vue'
+import BankCardDetailPage from '../bank-card/detail.vue'
 import CommonDataPage from '../common-data/common-data.vue'
 import CouponsPage from '../coupons/coupons.vue'
 import ComplaintsPage from '../complaints/complaints.vue'

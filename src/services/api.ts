@@ -48,6 +48,24 @@ export async function listMembershipPlans(): Promise<MembershipPlan[]> {
   if (response.statusCode >= 400) throw new Error('會員方案暫時無法載入')
   return (response.data as { data: MembershipPlan[] }).data
 }
+export type CardNetwork = 'visa' | 'mastercard' | 'unionpay' | 'amex' | 'jcb' | 'unknown'
+
+export type CardIdentification = {
+  network: CardNetwork
+  valid: boolean
+  maskedNumber: string
+}
+
+export async function identifyPaymentCard(cardNumber: string): Promise<CardIdentification> {
+  const response = await uni.request({
+    url: `${API_BASE_URL}/payment-cards/identify`,
+    method: 'POST',
+    data: { cardNumber: cardNumber.replace(/\D/g, '') }
+  })
+  if (response.statusCode >= 400) throw new Error('銀行卡號暫時無法識別')
+  return response.data as CardIdentification
+}
+
 export type SupportMessage = {
   id: string
   direction: 'inbound' | 'outbound' | string
